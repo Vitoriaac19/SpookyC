@@ -167,7 +167,7 @@ za    }*/
         }
 
         public void close() {
-
+//olas
             try {
                 send("shutting down your socket");
                 clientSocket.close();
