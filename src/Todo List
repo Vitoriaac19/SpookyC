@@ -1,0 +1,2 @@
+Player não receber a mensagem que entrou apenas o servidor e os outros players.
+Se o name for null, levar disconnect.
