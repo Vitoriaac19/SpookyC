@@ -1,12 +1,12 @@
 package server;
 
 import castle.Castle;
-import rooms.Kitchen;
-import rooms.Room;
 import rooms.RoomEnum;
-import rooms.RoomType;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,11 +14,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static rooms.RoomEnum.KITCHEN;
-
 public class Server {
-    private List<ClientHandler> clientHandlers;
     private final int MAX_CLIENTS = 2;
+    private List<ClientHandler> clientHandlers;
     private ServerSocket socket;
     private boolean running;
     private Castle castle;
@@ -31,6 +29,12 @@ public class Server {
         System.out.println(castle.getRooms());
     }
 
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.start();
+
+    }
+
     public synchronized void start() {
         try {
             socket = new ServerSocket(9000);
@@ -39,9 +43,9 @@ public class Server {
 
             while (running) {
                 Socket clientSocket = socket.accept();
-               clientHandler = new ClientHandler(clientSocket);
-                    addClient(clientHandler);
-                    pool.submit(clientHandler);
+                clientHandler = new ClientHandler(clientSocket);
+                acceptPlayer(clientHandler);
+                pool.submit(clientHandler);
 
 
             }
@@ -51,7 +55,7 @@ public class Server {
         }
     }
 
-    public synchronized void addClient(ClientHandler clientHandler){
+    public synchronized void addClient(ClientHandler clientHandler) {
         clientHandlers.add(clientHandler);
         System.out.println(getClientHandlers().size());
     }
@@ -60,29 +64,39 @@ public class Server {
         return clientHandlers;
     }
 
-    public void enterRoom(RoomType room){
-        clientHandler.enteredRoom=KITCHEN;
+  /*  public void enterRoom(RoomType room) {
+        clientHandler.enteredRoom = KITCHEN;
 
+    }*/
+
+    public void acceptPlayer(ClientHandler clientHandler) {
+        if (clientHandlers.size() < MAX_CLIENTS) {
+            addClient(clientHandler);
+            clientHandler.isconnected = true;
+        } else {
+            clientNotAccepted(clientHandler, "We dont have space yet. Please try again later.");
+            clientHandler.close();
+        }
     }
 
-    public static void main(String[] args) {
-        Server server = new Server();
-        server.start();
-
+    public void clientNotAccepted(ClientHandler clientHandler, String message) {
+        clientHandler.send(message);
     }
 
     //CLIENT HANDLER
-    public class ClientHandler implements Runnable{
+    public class ClientHandler implements Runnable {
+        private static BufferedReader in;
+        private static PrintWriter out;
         private Socket clientSocket;
         private String name;
         private String message;
-        private static BufferedReader in;
-        private static PrintWriter out;
         private RoomEnum enteredRoom;
+        private boolean isconnected;
 
-        public ClientHandler(Socket clientSocket){
+        public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
             this.name = "";
+            this.isconnected = false;
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -92,10 +106,12 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
+
         }
 
         @Override
         public void run() {
+
             send("enter your name: ");
             name = getAnswer();
             System.out.println(name + " has joined the game");
@@ -111,8 +127,8 @@ public class Server {
             out.println(message);
         }
 
-        public String welcomeToGame(){
-            String message = "Welcome to the game " + name + "\nYou just entered in the Spooky Castle." ;
+        public String welcomeToGame() {
+            String message = "Welcome to the game " + name + "\nYou just entered in the Spooky Castle.";
             return message;
         }
 
@@ -133,8 +149,6 @@ public class Server {
         }
 
 
-
-
         public String getAnswer() {
             String message = null;
             try {
@@ -152,5 +166,18 @@ public class Server {
         public String getName() {
             return name;
         }
+
+        public void close() {
+
+            try {
+                send("shutting down your socket");
+                clientSocket.close();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
     }
 }
