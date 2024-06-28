@@ -65,7 +65,7 @@ public class Server {
     }
 
   /*  public void enterRoom(RoomType room) {
-        clientHandler.enteredRoom = KITCHEN;
+        clientHandler.enteredRoom = KITCHEN;wqdqdcqew
 za    }*/
 
     public void acceptPlayer(ClientHandler clientHandler) {
