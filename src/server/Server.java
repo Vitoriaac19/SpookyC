@@ -1,7 +1,9 @@
 package server;
 
 import castle.Castle;
-import menus.Menu;
+
+import menus.Menu
+
 import rooms.RoomEnum;
 
 import java.io.BufferedReader;
@@ -40,6 +42,7 @@ public class Server {
         System.out.println(("Invalid choice.Please try again"));
     }
 
+
     public synchronized void start() {
         try {
             socket = new ServerSocket(9000);
@@ -50,6 +53,7 @@ public class Server {
                 Socket clientSocket = socket.accept();
                 clientHandler = new ClientHandler(clientSocket);
                 addClient(clientHandler);
+                acceptPlayer(clientHandler);
                 pool.submit(clientHandler);
 
 
@@ -115,6 +119,22 @@ public class Server {
     private void displayLivingRoomMenu() {
         clientHandler.send(Menu.getLivingRoomDoorMenu());
         clientHandler.handleLivingRoomDoorMenu();
+  /*  public void enterRoom(RoomType room) {
+        clientHandler.enteredRoom = KITCHEN;wqdqdcqew
+za    }*/
+
+    public void acceptPlayer(ClientHandler clientHandler) {
+        if (clientHandlers.size() < MAX_CLIENTS) {
+            addClient(clientHandler);
+            clientHandler.isconnected = true;
+        } else {
+            clientNotAccepted(clientHandler, "We dont have space yet. Please try again later.");
+            clientHandler.close();
+        }
+    }
+
+    public void clientNotAccepted(ClientHandler clientHandler, String message) {
+        clientHandler.send(message);
     }
 
     //CLIENT HANDLER
@@ -125,12 +145,14 @@ public class Server {
         private String name;
         private String message;
         private RoomEnum enteredRoom;
+        private boolean isconnected;
 
 
         //TODO String mais compacta do que String message
         public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
             this.name = "";
+            this.isconnected = false;
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -140,10 +162,12 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
+
         }
 
         @Override
         public void run() {
+
             send("enter your name: ");
             name = getAnswer();
             System.out.println(name + " has joined the game");
@@ -178,6 +202,10 @@ public class Server {
                     break;
 
             }
+
+        public String welcomeToGame() {
+            String message = "Welcome to the game " + name + "\nYou just entered in the Spooky Castle.";
+            return message;
         }
 
         private void handleKitchenDoorMenu() {
@@ -262,6 +290,7 @@ public class Server {
         public String getName() {
             return name;
         }
+
 
         public void handleGymDoorMenu() {
             String choice = getAnswer();
@@ -349,6 +378,19 @@ public class Server {
                     break;
             }
         }
+        public void close() {
+
+            try {
+                send("shutting down your socket");
+                clientSocket.close();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
     }
 
 }
