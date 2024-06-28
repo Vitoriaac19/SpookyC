@@ -170,7 +170,7 @@ public class Server {
                     displayMenu2();
                     break;
                 case "3":
-                    handleKitchenDoorMenu();
+                    displayKitchenMenu();
                     break;
                 default:
                     invalidChoice();
@@ -189,6 +189,7 @@ public class Server {
                     break;
                 case "2":
                     navigate();
+                    
                     break;
                 default:
                     invalidChoice();
