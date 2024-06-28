@@ -66,8 +66,7 @@ public class Server {
 
   /*  public void enterRoom(RoomType room) {
         clientHandler.enteredRoom = KITCHEN;
-
-    }*/
+za    }*/
 
     public void acceptPlayer(ClientHandler clientHandler) {
         if (clientHandlers.size() < MAX_CLIENTS) {
