@@ -1,0 +1,24 @@
+{
+  "quiz": [
+    {
+      "question": "What is the capital of France?",
+      "answers": [
+        "Berlin",
+        "Madrid",
+        "Paris",
+        "Rome"
+      ],
+      "correctAnswer": 2
+    },
+    {
+      "question": "What is the largest planet in our solar system?",
+      "answers": [
+        "Earth",
+        "Jupiter",
+        "Mars",
+        "Saturn"
+      ],
+      "correctAnswer": 1
+    }
+  ]
+}
