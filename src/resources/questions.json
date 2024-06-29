@@ -1,24 +1,48 @@
 {
-  "quiz": [
-    {
-      "question": "What is the capital of France?",
-      "answers": [
-        "Berlin",
-        "Madrid",
-        "Paris",
-        "Rome"
-      ],
-      "correctAnswer": 2
-    },
-    {
-      "question": "What is the largest planet in our solar system?",
-      "answers": [
-        "Earth",
-        "Jupiter",
-        "Mars",
-        "Saturn"
-      ],
-      "correctAnswer": 1
-    }
-  ]
+  "subjects": {
+    "Bathroom": [
+      {
+        "question": "What is the capital of France?",
+        "answers": [
+          "Berlin",
+          "Madrid",
+          "Paris",
+          "Rome"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which continent is the Sahara Desert located in?",
+        "answers": [
+          "Asia",
+          "Africa",
+          "South America",
+          "Australia"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "Kitchen": [
+      {
+        "question": "What is the chemical symbol for water?",
+        "answers": [
+          "H2O",
+          "O2",
+          "CO2",
+          "HO"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What planet is known as the Red Planet?",
+        "answers": [
+          "Earth",
+          "Mars",
+          "Jupiter",
+          "Saturn"
+        ],
+        "correctAnswer": 1
+      }
+    ]
+  }
 }
