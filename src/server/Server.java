@@ -1,9 +1,8 @@
 package server;
 
 import castle.Castle;
-
-import menus.Menu
-
+import menus.Menu;
+import rooms.Room;
 import rooms.RoomEnum;
 
 import java.io.BufferedReader;
@@ -17,19 +16,21 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static rooms.RoomEnum.KITCHEN;
+
 public class Server {
     private final int MAX_CLIENTS = 2;
     private List<ClientHandler> clientHandlers;
     private ServerSocket socket;
     private boolean running;
     private Castle castle;
-    private ClientHandler clientHandler;
+    // private ClientHandler clientHandler;
 
     public Server() {
         clientHandlers = new ArrayList<>(MAX_CLIENTS);
         castle = new Castle(this);
         running = true;
-        System.out.println(castle.getRooms());
+        //System.out.println(castle.getRoom());
     }
 
     public static void main(String[] args) {
@@ -51,8 +52,7 @@ public class Server {
 
             while (running) {
                 Socket clientSocket = socket.accept();
-                clientHandler = new ClientHandler(clientSocket);
-                addClient(clientHandler);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 acceptPlayer(clientHandler);
                 pool.submit(clientHandler);
 
@@ -69,59 +69,11 @@ public class Server {
         System.out.println(getClientHandlers().size());
     }
 
-  /*  public void enterRoom(RoomType room) {
-        clientHandler.enteredRoom = KITCHEN;
-
-    }
-
-   */
 
     public List<ClientHandler> getClientHandlers() {
         return clientHandlers;
     }
 
-    private void displayMenu2() {
-        clientHandler.send(Menu.getMenu2());
-        clientHandler.handleMenu2();
-    }
-
-    private void displayBathroomMenu() {
-        clientHandler.send(Menu.getBathroomDoorMenu());
-        clientHandler.handleBathroomMenu();
-
-    }
-
-    private void displayKitchenMenu() {
-        clientHandler.send(Menu.getKitchenDoorMenu());
-        clientHandler.handleKitchenDoorMenu();
-    }
-
-    private void displayGymMenu() {
-        clientHandler.send(Menu.getGymDoorMenu());
-        clientHandler.handleGymDoorMenu();
-    }
-
-    private void displayMenu3() {
-        clientHandler.send(Menu.getMenu3());
-        clientHandler.handleMenu3();
-    }
-
-    private void displayBedroomMenu() {
-        clientHandler.send(Menu.getBedroomDoorMenu());
-        clientHandler.handleBedroomDoorMenu();
-    }
-
-    private void displayOfficeMenu() {
-        clientHandler.send(Menu.getOfficeDoorMenu());
-        clientHandler.handleOfficeDoorMenu();
-    }
-
-    private void displayLivingRoomMenu() {
-        clientHandler.send(Menu.getLivingRoomDoorMenu());
-        clientHandler.handleLivingRoomDoorMenu();
-  /*  public void enterRoom(RoomType room) {
-        clientHandler.enteredRoom = KITCHEN;wqdqdcqew
-za    }*/
 
     public void acceptPlayer(ClientHandler clientHandler) {
         if (clientHandlers.size() < MAX_CLIENTS) {
@@ -137,22 +89,28 @@ za    }*/
         clientHandler.send(message);
     }
 
+    private Castle getCastle() {
+        return castle;
+    }
+
     //CLIENT HANDLER
     public class ClientHandler implements Runnable {
-        private static BufferedReader in;
-        private static PrintWriter out;
+        boolean isconnected;
+        private BufferedReader in;
+        private PrintWriter out;
         private Socket clientSocket;
         private String name;
         private String message;
         private RoomEnum enteredRoom;
-        private boolean isconnected;
+        private Server server;
 
 
         //TODO String mais compacta do que String message
-        public ClientHandler(Socket clientSocket) {
+        public ClientHandler(Socket clientSocket, Server server) {
             this.clientSocket = clientSocket;
             this.name = "";
             this.isconnected = false;
+            this.server = server;
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -165,6 +123,48 @@ za    }*/
 
         }
 
+        private void displayMenu2() {
+            send(Menu.getMenu2());
+            handleMenu2();
+        }
+
+        private void displayBathroomMenu() {
+            send(Menu.getBathroomDoorMenu());
+            handleBathroomMenu();
+
+        }
+
+        private void displayKitchenMenu() {
+            send(Menu.getKitchenDoorMenu());
+            handleKitchenDoorMenu();
+        }
+
+        private void displayGymMenu() {
+            send(Menu.getGymDoorMenu());
+            handleGymDoorMenu();
+        }
+
+        private void displayMenu3() {
+            send(Menu.getMenu3());
+            handleMenu3();
+        }
+
+        private void displayBedroomMenu() {
+            send(Menu.getBedroomDoorMenu());
+            handleBedroomDoorMenu();
+        }
+
+        private void displayOfficeMenu() {
+            send(Menu.getOfficeDoorMenu());
+            handleOfficeDoorMenu();
+        }
+
+        private void displayLivingRoomMenu() {
+            send(Menu.getLivingRoomDoorMenu());
+            handleLivingRoomDoorMenu();
+
+        }
+
         @Override
         public void run() {
 
@@ -172,7 +172,7 @@ za    }*/
             name = getAnswer();
             System.out.println(name + " has joined the game");
 
-            clientHandlers.add(this); //VERIFICAR
+            //   clientHandlers.add(this); //VERIFICAR
 
             send(Menu.getWelcomeMessage());
             navigate();
@@ -197,22 +197,50 @@ za    }*/
                     displayKitchenMenu();
                     break;
                 default:
-                    invalidChoice();
+                    Server.invalidChoice();
                     handleMainMenu();
                     break;
 
             }
+        }
 
         public String welcomeToGame() {
             String message = "Welcome to the game " + name + "\nYou just entered in the Spooky Castle.";
             return message;
         }
 
-        private void handleKitchenDoorMenu() {
+        private void enteredRoom(RoomEnum roomEnum) {
+            Room room = server.getCastle().getRoom(roomEnum);
+            room.enterRoom(this);
+            enteredRoom = roomEnum;
+            send("you entered in " + roomEnum.getName());
+
+            if (room.areTwoPlayersInRoom()) {
+                for (ClientHandler clientHandler : server.getClientHandlers()) {
+                    if (clientHandler != this && clientHandler.enteredRoom == roomEnum) {
+                        clientHandler.send("Both players are in " + roomEnum.getName());
+                        send("Both players are in " + roomEnum.getName());
+
+                    }
+                }
+            }
+        }
+
+        private void leaveRoom() {
+            if (enteredRoom != null) {
+                Room room = server.getCastle().getRoom(enteredRoom);
+                room.leaveRoom(this);
+                enteredRoom = null;
+                send("You left the room");
+            }
+        }
+
+        void handleKitchenDoorMenu() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
                     send("You entered in Kitchen");
+                    enteredRoom(KITCHEN);
                     //Metodo de question
                     break;
                 case "2":
@@ -227,7 +255,7 @@ za    }*/
         }
 
 
-        private void handleBathroomMenu() {
+        void handleBathroomMenu() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -245,7 +273,7 @@ za    }*/
         }
 
 
-        private void handleMenu2() {
+        void handleMenu2() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -278,12 +306,9 @@ za    }*/
             try {
                 message = in.readLine();
             } catch (IOException | NullPointerException e) {
-                System.out.println("aa"); // Alterar
-            } finally {
-                if (message == null) {
-                    System.out.println("aa"); // Alterar
-                }
+                System.out.println("Erro a ler"); // Alterar
             }
+
             return message;
         }
 
@@ -378,6 +403,7 @@ za    }*/
                     break;
             }
         }
+
         public void close() {
 
             try {
@@ -388,7 +414,6 @@ za    }*/
                 throw new RuntimeException(e);
             }
         }
-
 
 
     }

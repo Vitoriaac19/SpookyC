@@ -1,7 +1,7 @@
 package rooms;
 
-public class Livingroom  extends Room{
-    public Livingroom(boolean isOccupied) {
-        super(isOccupied, RoomEnum.KITCHEN.getKey());
+public class Livingroom extends Room {
+    public Livingroom(Key isOccupied) {
+        super(RoomEnum.KITCHEN.getKey());
     }
 }
