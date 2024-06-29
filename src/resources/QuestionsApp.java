@@ -44,9 +44,9 @@ public class QuestionsApp {
             }
 
             if (userAnswer - 1 == randomQuestion.getCorrectAnswer()) {
-                System.out.println("Correct!\n");
+                System.out.println("Correct!");
             } else {
-                System.out.println("Incorrect.\n");
+                System.out.println("Incorrect.");
             }
 
 
