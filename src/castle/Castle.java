@@ -1,61 +1,65 @@
 package castle;
 
-import player.Client;
 import rooms.*;
 import server.Server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Locale.filter;
-import static rooms.RoomEnum.BATHROOM;
-
 public class Castle {
-    private String name;
     private List<Room> rooms;
-    private RoomEnum type;
     //private List<Client> clients;
-    private Client client;
+
     private Server server;
 
 
     public Castle(Server server) {
-        this.rooms = new ArrayList<>();
-        this.name = name;
-        initializeRooms();
+        this.server = server;
+        rooms = new ArrayList<>(RoomEnum.values().length);
 
-    }
 
-    private void initializeRooms() {
-        RoomEnum[] possibleRooms = RoomEnum.values();
-        for (RoomEnum roomType : possibleRooms) {
-            switch (roomType) {
-                case KITCHEN:
-                    rooms.add(new Kitchen(false));
-                    break;
-                case LIVINGROOM:
-                    rooms.add(new Livingroom(false));
-                    break;
-                case OFFICE:
-                    rooms.add(new Office(false));
-                    break;
-                case BATHROOM:
-                    rooms.add(new Bathroom(false));
-                    break;
-                case BEDROOM:
-                    rooms.add(new Bedroom(false));
-                    break;
-                default:
-            }
+        // Adiciona especifico
+        for (RoomEnum roomEnum : RoomEnum.values()) {
+            rooms.add(initializeRooms(roomEnum));
         }
 
     }
 
-    public List<Room> getRooms() {
-        return rooms;
+    private Room initializeRooms(RoomEnum roomEnum) {
+        //  RoomEnum[] possibleRooms = RoomEnum.values();
+        // for (RoomEnum roomType : possibleRooms) {
+        switch (roomEnum) {
+            case KITCHEN:
+                return new Kitchen(roomEnum.getKey());
+
+            case LIVINGROOM:
+                return new Livingroom(roomEnum.getKey());
+
+            case OFFICE:
+                return new Office(roomEnum.getKey());
+
+            case BATHROOM:
+                return new Bathroom(roomEnum.getKey());
+
+            case BEDROOM:
+                return new Bedroom(roomEnum.getKey());
+
+            default:
+                System.out.println("error");
+
+        }
+
+        // }
+
+
+        return null;
     }
 
-/////lalalalalal
+
+    public Room getRoom(RoomEnum roomEnum) {
+        return rooms.get(roomEnum.ordinal());
+    }
+
+
 }
 

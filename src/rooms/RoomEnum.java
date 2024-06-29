@@ -24,4 +24,8 @@ public enum RoomEnum {
     public RoomType getRoomType() {
         return roomType;
     }
+
+    public String getName() {
+        return this.name();
+    }
 }
