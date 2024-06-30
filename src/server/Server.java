@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static rooms.RoomEnum.KITCHEN;
+import static rooms.RoomEnum.*;
 
 public class Server {
     private final int MAX_CLIENTS = 2;
@@ -213,17 +213,14 @@ public class Server {
             Room room = server.getCastle().getRoom(roomEnum);
             room.enterRoom(this);
             enteredRoom = roomEnum;
-            send("you entered in " + roomEnum.getName());
+         /*   send("Ola");
+            send("You entered " + roomEnum.getName());
+            send("DEBUG: " + name + " entered room " + roomEnum.getName());
+            send("DEBUG: Current room clients: " + room.getClients());
 
-            if (room.areTwoPlayersInRoom()) {
-                for (ClientHandler clientHandler : server.getClientHandlers()) {
-                    if (clientHandler != this && clientHandler.enteredRoom == roomEnum) {
-                        clientHandler.send("Both players are in " + roomEnum.getName());
-                        send("Both players are in " + roomEnum.getName());
 
-                    }
-                }
-            }
+          */
+
         }
 
         private void leaveRoom() {
@@ -260,6 +257,7 @@ public class Server {
             switch (choice) {
                 case "1":
                     send("You entered in the Bathroom");
+                    enteredRoom(BATHROOM);
                     // Falta metodo de chamar question
                     break;
                 case "2":
@@ -316,12 +314,13 @@ public class Server {
             return name;
         }
 
-
         public void handleGymDoorMenu() {
+
             String choice = getAnswer();
             switch (choice) {
                 case "1":
                     send("You entered in the Gym");
+                    enteredRoom(GYM);
                     //Metodo de question
                     break;
                 case "2":
@@ -358,6 +357,7 @@ public class Server {
             switch (choice) {
                 case "1":
                     send("You entered in the Bedroom");
+                    enteredRoom(BEDROOM);
                     //Metodo de question
                     break;
                 case "2":
@@ -375,6 +375,7 @@ public class Server {
             switch (choice) {
                 case "1":
                     send("You entered in the Living Room");
+                    enteredRoom(LIVINGROOM);
                     //Metodo de question
                     break;
                 case "2":
@@ -392,6 +393,7 @@ public class Server {
             switch (choice) {
                 case "1":
                     send("You entered in the Office");
+                    enteredRoom(OFFICE);
                     //Metodo de question
                     break;
                 case "2":

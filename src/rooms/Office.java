@@ -2,6 +2,6 @@ package rooms;
 
 public class Office extends Room {
     public Office(Key key) {
-        super(RoomEnum.KITCHEN.getKey());
+        super(RoomEnum.OFFICE.getKey());
     }
 }
