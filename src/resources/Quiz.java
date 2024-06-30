@@ -1,17 +1,13 @@
 package resources;
 
-
 import java.util.List;
+import java.util.Map;
 
 public class Quiz {
 
-    private List<Question> quiz;
+    private Map<String, List<Question>> subjects;
 
-    public List<Question> getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(List<Question> quiz) {
-        this.quiz = quiz;
+    public Map<String, List<Question>> getSubjects() {
+        return subjects;
     }
 }
