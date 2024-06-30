@@ -111,4 +111,18 @@ public class Menu {
     public static String getWelcomeMessage() {
         return "Welcome to the Castle ...";
     }
+
+
+    public static String getRockPaperScissorsMenu() {
+        return "+-------------------------------+\n" +
+                "| Choose your move:             |\n" +
+                "| [1] Rock                      |\n" +
+                "| [2] Paper                     |\n" +
+                "| [3] Scissors                  |\n" +
+                "+-------------------------------+\n" +
+                "> ";
+    }
+
 }
+
+

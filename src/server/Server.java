@@ -213,6 +213,16 @@ public class Server {
             Room room = server.getCastle().getRoom(roomEnum);
             room.enterRoom(this);
             enteredRoom = roomEnum;
+            List<ClientHandler> clientsInRoom = room.getClients();
+            if (clientsInRoom.size() > 1) {
+                for (ClientHandler client : clientsInRoom) {
+                    if (client != this) {
+                        send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
+                        client.send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
+                        startRockPaperScissors(client);
+                    }
+                }
+            }
          /*   send("Ola");
             send("You entered " + roomEnum.getName());
             send("DEBUG: " + name + " entered room " + roomEnum.getName());
@@ -221,6 +231,43 @@ public class Server {
 
           */
 
+        }
+
+        private void startRockPaperScissors(ClientHandler opponent) {
+            send(Menu.getRockPaperScissorsMenu());
+            opponent.send(Menu.getRockPaperScissorsMenu());
+
+            String playerChoice = getAnswer();
+            String opponentChoice = opponent.getAnswer();
+            int result = determineWinner(playerChoice, opponentChoice);
+            if (result == 1) {
+                send("You won");
+                opponent.send("You lost");
+                opponent.leaveRoom();
+            } else if (result == -1) {
+                send("You lost");
+                opponent.send("You won");
+                leaveRoom();
+            } else {
+                send("It's a Draw");
+                opponent.send(" It's a Draw");
+            }
+        }
+
+        private int determineWinner(String playerChoice, String opponentChoice) {
+
+            int playerChoiceInt = Integer.parseInt(playerChoice);
+            int opponentChoiceInt = Integer.parseInt(opponentChoice);
+
+            //Rock vai ser 1 , paper vai ser 2 e Scissors vai ser 3
+            if (playerChoice == opponentChoice) {
+                return 0;  //empate
+            }
+
+            if (playerChoiceInt == 1 && opponentChoiceInt == 3 || playerChoiceInt == 2 && opponentChoiceInt == 1 || playerChoiceInt == 3 && opponentChoiceInt == 2) {
+                return 1; //venceu
+            }
+            return -1; //perdeu
         }
 
         private void leaveRoom() {

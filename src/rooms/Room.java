@@ -51,11 +51,7 @@ public abstract class Room {
         return clients.size() == 2;
     }
 
-    public String getClients() {
-        String client = "";
-        for (Server.ClientHandler clientHandler : clients) {
-            client += clientHandler.getName() + " ";
-        }
-        return client;
+    public List<Server.ClientHandler> getClients() {
+        return clients;
     }
 }

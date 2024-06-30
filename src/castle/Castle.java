@@ -45,14 +45,11 @@ public class Castle {
                 return new Bedroom(roomEnum.getKey());
 
             default:
-                System.out.println("error");
+                return null;
 
         }
 
-        // }
 
-
-        return null;
     }
 
 
