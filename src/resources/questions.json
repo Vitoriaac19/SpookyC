@@ -1,0 +1,616 @@
+{
+  "subjects": {
+    "Bathroom": [
+      {
+        "question": "What is the capital of France?",
+        "answers": [
+          "Berlin",
+          "Madrid",
+          "Paris",
+          "Rome"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which continent is the Sahara Desert located in?",
+        "answers": [
+          "Asia",
+          "Africa",
+          "South America",
+          "Australia"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the longest river in the world?",
+        "answers": [
+          "Nile",
+          "Amazon",
+          "Yangtze",
+          "Mississippi"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which country has the largest population?",
+        "answers": [
+          "India",
+          "USA",
+          "China",
+          "Russia"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the smallest country in the world?",
+        "answers": [
+          "Monaco",
+          "Vatican City",
+          "San Marino",
+          "Liechtenstein"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which city is known as the 'Big Apple'?",
+        "answers": [
+          "Los Angeles",
+          "Chicago",
+          "New York",
+          "San Francisco"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which country is known as the Land of the Rising Sun?",
+        "answers": [
+          "China",
+          "South Korea",
+          "Japan",
+          "Thailand"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which is the largest ocean on Earth?",
+        "answers": [
+          "Atlantic",
+          "Indian",
+          "Arctic",
+          "Pacific"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "What is the capital of Australia?",
+        "answers": [
+          "Sydney",
+          "Melbourne",
+          "Canberra",
+          "Brisbane"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which desert is the largest in the world?",
+        "answers": [
+          "Arabian",
+          "Gobi",
+          "Kalahari",
+          "Sahara"
+        ],
+        "correctAnswer": 3
+      }
+    ],
+    "Kitchen": [
+      {
+        "question": "What is the chemical symbol for water?",
+        "answers": [
+          "H2O",
+          "O2",
+          "CO2",
+          "HO"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What planet is known as the Red Planet?",
+        "answers": [
+          "Earth",
+          "Mars",
+          "Jupiter",
+          "Saturn"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the hardest natural substance on Earth?",
+        "answers": [
+          "Gold",
+          "Iron",
+          "Diamond",
+          "Platinum"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which gas do plants absorb from the atmosphere?",
+        "answers": [
+          "Oxygen",
+          "Carbon Dioxide",
+          "Nitrogen",
+          "Hydrogen"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the boiling point of water at sea level?",
+        "answers": [
+          "50°C",
+          "75°C",
+          "100°C",
+          "125°C"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the powerhouse of the cell?",
+        "answers": [
+          "Nucleus",
+          "Ribosome",
+          "Mitochondria",
+          "Golgi Apparatus"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What type of blood cells are responsible for carrying oxygen?",
+        "answers": [
+          "White Blood Cells",
+          "Platelets",
+          "Red Blood Cells",
+          "Plasma"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the most abundant gas in the Earth's atmosphere?",
+        "answers": [
+          "Oxygen",
+          "Hydrogen",
+          "Carbon Dioxide",
+          "Nitrogen"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "What part of the brain controls voluntary movements?",
+        "answers": [
+          "Cerebrum",
+          "Cerebellum",
+          "Medulla",
+          "Hypothalamus"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What is the main component of the Sun?",
+        "answers": [
+          "Helium",
+          "Oxygen",
+          "Carbon",
+          "Hydrogen"
+        ],
+        "correctAnswer": 3
+      }
+    ],
+    "Livingroom": [
+      {
+        "question": "What is the value of π (pi) to two decimal places?",
+        "answers": [
+          "3.12",
+          "3.14",
+          "3.15",
+          "3.16"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the square root of 64?",
+        "answers": [
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the area of a circle with radius 5?",
+        "answers": [
+          "25π",
+          "50π",
+          "75π",
+          "100π"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What is the solution to the equation 2x + 3 = 7?",
+        "answers": [
+          "x = 1",
+          "x = 2",
+          "x = 3",
+          "x = 4"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is 10% of 200?",
+        "answers": [
+          "10",
+          "15",
+          "20",
+          "25"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the derivative of x^2?",
+        "answers": [
+          "x",
+          "2x",
+          "x^2",
+          "2x^2"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the value of 5 factorial (5!)?",
+        "answers": [
+          "60",
+          "100",
+          "120",
+          "150"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "What is the sum of the angles in a triangle?",
+        "answers": [
+          "90°",
+          "180°",
+          "270°",
+          "360°"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the Pythagorean theorem?",
+        "answers": [
+          "a^2 + b^2 = c",
+          "a^2 + b^2 = c^2",
+          "a + b = c^2",
+          "a^2 = b^2 + c^2"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the value of log(100) to base 10?",
+        "answers": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "Office": [
+      {
+        "question": "Who was the first king of Portugal?",
+        "answers": [
+          "Afonso I",
+          "John I",
+          "Manuel I",
+          "Sebastian I"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "In which year did Portugal become a republic?",
+        "answers": [
+          "1908",
+          "1910",
+          "1912",
+          "1914"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the name of the Portuguese dictator who ruled from 1932 to 1968?",
+        "answers": [
+          "António de Oliveira Salazar",
+          "Marcelo Caetano",
+          "Manuel de Arriaga",
+          "João Franco"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What is the name of the treaty that divided the world between Portugal and Spain in 1494?",
+        "answers": [
+          "Treaty of Tordesillas",
+          "Treaty of Zaragoza",
+          "Treaty of Alcáçovas",
+          "Treaty of Windsor"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What was the Portuguese Age of Exploration called?",
+        "answers": [
+          "The Renaissance",
+          "The Enlightenment",
+          "The Great Discoveries",
+          "The Reconquista"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which famous explorer discovered the sea route to India in 1498?",
+        "answers": [
+          "Christopher Columbus",
+          "Vasco da Gama",
+          "Ferdinand Magellan",
+          "Bartolomeu Dias"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What was the name of the Portuguese colony in Brazil?",
+        "answers": [
+          "New Portugal",
+          "Lusitania",
+          "Santa Maria",
+          "Terra de Santa Cruz"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Who was the last king of Portugal?",
+        "answers": [
+          "Carlos I",
+          "Manuel II",
+          "Pedro IV",
+          "João VI"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "What is the name of the revolution that ended the dictatorship in Portugal in 1974?",
+        "answers": [
+          "The Carnation Revolution",
+          "The April Revolution",
+          "The Red Revolution",
+          "The Portuguese Spring"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which Portuguese prince is known as 'The Navigator'?",
+        "answers": [
+          "Prince Henry",
+          "Prince John",
+          "Prince Afonso",
+          "Prince Ferdinand"
+        ],
+        "correctAnswer": 0
+      }
+    ],
+    "Bedroom": [
+      {
+        "question": "What is the correct syntax to output 'Hello World' in Java?",
+        "answers": [
+          "System.out.print('Hello World');",
+          "echo 'Hello World';",
+          "print('Hello World');",
+          "System.out.println('Hello World');"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Which data type is used to create a variable that should store text?",
+        "answers": [
+          "myString",
+          "string",
+          "String",
+          "txt"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which method can be used to find the length of a string?",
+        "answers": [
+          "length()",
+          "getSize()",
+          "getLength()",
+          "size()"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "How do you create a variable with the numeric value 5?",
+        "answers": [
+          "x = 5;",
+          "num x = 5;",
+          "int x = 5;",
+          "double x = 5;"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which method can be used to return a string in upper case letters?",
+        "answers": [
+          "upperCase()",
+          "toUpperCase()",
+          "touppercase()",
+          "UpperCase()"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which operator is used to add together two values?",
+        "answers": [
+          "The & sign",
+          "The + sign",
+          "The * sign",
+          "The % sign"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which keyword is used to import a package from the Java API library?",
+        "answers": [
+          "import",
+          "package",
+          "include",
+          "using"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "How do you start writing a comment in Java?",
+        "answers": [
+          "//",
+          "/*",
+          "<!--",
+          "#"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which statement is used to stop a loop?",
+        "answers": [
+          "exit",
+          "break",
+          "stop",
+          "return"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "How do you declare an array in Java?",
+        "answers": [
+          "int[] arr;",
+          "array arr;",
+          "int arr[];",
+          "arr{int};"
+        ],
+        "correctAnswer": 0
+      }
+    ],
+    "Gym": [
+      {
+        "question": "Which Portuguese footballer has won the Ballon d'Or five times?",
+        "answers": [
+          "Eusébio",
+          "Luís Figo",
+          "Cristiano Ronaldo",
+          "Deco"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which Portuguese football club has won the most Primeira Liga titles?",
+        "answers": [
+          "Sporting CP",
+          "Benfica",
+          "Porto",
+          "Braga"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which Portuguese city hosted the UEFA Euro 2004 final?",
+        "answers": [
+          "Porto",
+          "Lisbon",
+          "Coimbra",
+          "Braga"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which Portuguese footballer is known as 'O Magriço'?",
+        "answers": [
+          "Cristiano Ronaldo",
+          "Luís Figo",
+          "Paulo Futre",
+          "Eusébio"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Which team won the Taça de Portugal in 2021?",
+        "answers": [
+          "Benfica",
+          "Porto",
+          "Sporting CP",
+          "Braga"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Who is the captain of the Portuguese national football team as of 2021?",
+        "answers": [
+          "Pepe",
+          "Bernardo Silva",
+          "Cristiano Ronaldo",
+          "Bruno Fernandes"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which Portuguese club did José Mourinho manage before moving to Chelsea?",
+        "answers": [
+          "Benfica",
+          "Sporting CP",
+          "Porto",
+          "Braga"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Which Portuguese runner won the gold medal in the marathon at the 1984 Olympics?",
+        "answers": [
+          "Carlos Lopes",
+          "Rosa Mota",
+          "Fernando Mamede",
+          "António Pinto"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which Portuguese football club has the nickname 'The Dragons'?",
+        "answers": [
+          "Benfica",
+          "Porto",
+          "Sporting CP",
+          "Braga"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which Portuguese footballer is known for the famous 'Panenka' penalty in Euro 2016?",
+        "answers": [
+          "Nani",
+          "Ricardo Quaresma",
+          "João Moutinho",
+          "Éder"
+        ],
+        "correctAnswer": 3
+      }
+    ]
+  }
+}
