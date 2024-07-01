@@ -2,6 +2,7 @@ package server;
 
 import castle.Castle;
 import menus.Menu;
+import rooms.Key;
 import rooms.Room;
 import rooms.RoomEnum;
 
@@ -39,8 +40,8 @@ public class Server {
 
     }
 
-    private static void invalidChoice() {
-        System.out.println(("Invalid choice.Please try again"));
+    private static String invalidChoice() {
+        return "A cold shiver runs down your spine... You've wandered astray. Return to the entrance hall before the darkness takes hold...";
     }
 
 
@@ -100,7 +101,7 @@ public class Server {
         private PrintWriter out;
         private Socket clientSocket;
         private String name;
-        private String message;
+        private List<Key> keys;
         private RoomEnum enteredRoom;
         private Server server;
 
@@ -111,6 +112,7 @@ public class Server {
             this.name = "";
             this.isconnected = false;
             this.server = server;
+            this.keys = new ArrayList<>();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -121,6 +123,15 @@ public class Server {
             }
 
 
+        }
+
+
+        public List<Key> getKeys() {
+            return keys;
+        }
+
+        public void addKey(Key key) {
+            keys.add(key);
         }
 
         private void displayMenu2() {
@@ -196,18 +207,17 @@ public class Server {
                 case "3":
                     displayKitchenMenu();
                     break;
+                case "4":
+                    displayKeys();
+                    break;
                 default:
-                    Server.invalidChoice();
+                    invalidMenuChoice();
                     handleMainMenu();
                     break;
 
             }
         }
 
-        public String welcomeToGame() {
-            String message = "Welcome to the game " + name + "\nYou just entered in the Spooky Castle.";
-            return message;
-        }
 
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = server.getCastle().getRoom(roomEnum);
@@ -220,6 +230,7 @@ public class Server {
                         send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
                         client.send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
                         startRockPaperScissors(client);
+                        break;
                     }
                 }
             }
@@ -233,26 +244,112 @@ public class Server {
 
         }
 
+
         private void startRockPaperScissors(ClientHandler opponent) {
             send(Menu.getRockPaperScissorsMenu());
             opponent.send(Menu.getRockPaperScissorsMenu());
 
             String playerChoice = getAnswer();
+            send("You have chosen " + choiceToString(playerChoice));
+            opponent.send("Other player has already made a choice");
+
             String opponentChoice = opponent.getAnswer();
+            opponent.send("You have chosen " + choiceToString(opponentChoice));
+            send("Other player has already made a choice");
+
             int result = determineWinner(playerChoice, opponentChoice);
             if (result == 1) {
-                send("You won");
-                opponent.send("You lost");
+                send("You won! You receive a key from this room as a reward.");
+                opponent.send("You lost! Your opponent receives a key from this room as a reward.");
+                addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 opponent.leaveRoom();
             } else if (result == -1) {
-                send("You lost");
-                opponent.send("You won");
+                send("You lost! Your opponent receives a key from this room as a reward.");
+                opponent.send("You won! You receive a key from this room as a reward.");
+                opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 leaveRoom();
             } else {
-                send("It's a Draw");
-                opponent.send(" It's a Draw");
+                send("It's a draw!");
+                opponent.send("It's a draw!");
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    startRockPaperScissors(opponent);
+                }).start();
+                return;
+            }
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (result == 1) {
+                    displayRoomMenu(enteredRoom);
+                } else {
+                    send(Menu.getMainMenu());
+                    resetInputStream();
+                    handleMainMenu();
+                }
+            }).start();
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (result == -1) {
+                    opponent.displayRoomMenu(opponent.enteredRoom);
+                } else {
+                    opponent.send(Menu.getMainMenu());
+                    opponent.resetInputStream();
+                    opponent.handleMainMenu();
+                }
+            }).start();
+        }
+
+        private void displayRoomMenu(RoomEnum room) {
+            switch (room) {
+                case BATHROOM:
+                    displayBathroomMenu();
+                    break;
+                case KITCHEN:
+                    displayKitchenMenu();
+                    break;
+                case GYM:
+                    displayGymMenu();
+                    break;
+                case BEDROOM:
+                    displayBedroomMenu();
+                    break;
+                case OFFICE:
+                    displayOfficeMenu();
+                    break;
+                case LIVINGROOM:
+                    displayLivingRoomMenu();
+                    break;
+                default:
+                    send(Menu.getMainMenu());
+                    handleMainMenu();
+                    break;
             }
         }
+
+        private void resetInputStream() {
+            try {
+                while (in.ready()) {
+                    in.read();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         private int determineWinner(String playerChoice, String opponentChoice) {
 
@@ -260,7 +357,8 @@ public class Server {
             int opponentChoiceInt = Integer.parseInt(opponentChoice);
 
             //Rock vai ser 1 , paper vai ser 2 e Scissors vai ser 3
-            if (playerChoice == opponentChoice) {
+            if (playerChoiceInt == opponentChoiceInt) {
+
                 return 0;  //empate
             }
 
@@ -268,6 +366,19 @@ public class Server {
                 return 1; //venceu
             }
             return -1; //perdeu
+        }
+
+        private String choiceToString(String choice) {
+            switch (choice) {
+                case "1":
+                    return "Rock";
+                case "2":
+                    return "Paper";
+                case "3":
+                    return "Scissors";
+                default:
+                    return "Invalid choice";
+            }
         }
 
         private void leaveRoom() {
@@ -285,7 +396,9 @@ public class Server {
                 case "1":
                     send("You entered in Kitchen");
                     enteredRoom(KITCHEN);
-                    //Metodo de question
+                    //question
+                    // questionHandler
+                    //Validar
                     break;
                 case "2":
                     navigate();
@@ -333,13 +446,30 @@ public class Server {
                 case "4":
                     navigate();
                     break;
+                case "5":
+                    displayKeys();
+                    break;
                 default:
-                    invalidChoice();
+                    invalidMenuChoice();
                     handleMenu2();
+
                     break;
             }
 
 
+        }
+
+        private void invalidMenuChoice() {
+            send(Server.invalidChoice());
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                send(Menu.getMainMenu());
+
+            }).start();
         }
 
         public void send(String message) {
@@ -392,11 +522,38 @@ public class Server {
                 case "3":
                     displayMenu2();
                     break;
+                case "4":
+                    displayKeys();
+
+                    break;
                 default:
                     invalidChoice();
-                    displayMenu3();
+                    handleMenu3();
                     break;
             }
+        }
+
+        private void displayKeys() {
+            if (keys.isEmpty()) {
+                send("You don't have any keys , you going back to the main menu");
+
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    send(Menu.getMainMenu());
+
+                }).start();
+            } else {
+                String message = "Your keys : ";
+                for (Key key : keys) {
+                    message = message + key + "\n";
+                }
+                send(message);
+            }
+
         }
 
         public void handleBedroomDoorMenu() {
