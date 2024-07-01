@@ -27,8 +27,6 @@ B
 src/rooms/Gym.java,7/a/7a91f1694b1f134753ed927b7ee9494c8440a22d
 B
 src/rooms/Key.java,8/5/85bff0a729b0e17652f344b8d13742abe77c1394
-O
-src/resources/QuestionsApp.java,e/3/e30c311283be93ad51e3783b228b1a16f6a18d35
 =
 src/Todo List,8/b/8b36b2eff8f58271075584ad7997b4e520282454
 B
