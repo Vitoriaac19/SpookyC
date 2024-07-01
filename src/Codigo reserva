@@ -1,0 +1,196 @@
+/*
+                public void handleBedroomDoorMenu() {
+                    String choice = getAnswer();
+                    switch (choice) {
+                        case "1":
+                            send("You entered in the Bedroom");
+                            enteredRoom(BEDROOM);
+                            //Metodo de question
+                            break;
+                        case "2":
+                            displayMenu3();
+                            break;
+                        default:
+                            invalidChoice();
+                            displayBedroomMenu();
+                            break;
+                    }
+                }
+
+                public void handleLivingRoomDoorMenu() {
+                    String choice = getAnswer();
+                    switch (choice) {
+                        case "1":
+                            send("You entered in the Living Room");
+                            enteredRoom(LIVINGROOM);
+                            //Metodo de question
+                            break;
+                        case "2":
+                            displayMenu3();
+                            break;
+                        default:
+                            invalidChoice();
+                            displayLivingRoomMenu();
+                            break;
+                    }
+                }
+
+                public void handleOfficeDoorMenu() {
+                    String choice = getAnswer();
+                    switch (choice) {
+                        case "1":
+                            send("You entered in the Office");
+                            enteredRoom(OFFICE);
+                            //Metodo de question
+                            break;
+                        case "2":
+                            displayMenu2();
+                            break;
+                        default:
+                            invalidChoice();
+                            displayOfficeMenu();
+                            break;
+                    }
+                }
+
+
+         */
+
+
+
+
+          /*
+                         public void handleGymDoorMenu() {
+
+                             String choice = getAnswer();
+                             switch (choice) {
+                                 case "1":
+                                     send("You entered in the Gym");
+                                     enteredRoom(GYM);
+                                     //Metodo de question
+                                     break;
+                                 case "2":
+                                     displayMenu2();
+                                     break;
+                                 default:
+                                     invalidChoice();
+                                     displayGymMenu();
+                                     break;
+                             }
+                         }
+
+
+                  */
+
+                    /*
+                                  void handleKitchenDoorMenu() {
+                                      String choice = getAnswer();
+                                      switch (choice) {
+                                          case "1":
+                                              send("You entered in Kitchen");
+                                              enteredRoom(KITCHEN);
+                                              //question
+                                              // questionHandler
+                                              //Validar
+                                              break;
+                                          case "2":
+                                              navigate();
+
+                                              break;
+                                          default:
+                                              invalidChoice();
+                                              displayKitchenMenu();
+                                              break;
+                                      }
+                                  }
+
+
+                                  void handleBathroomMenu() {
+                                      String choice = getAnswer();
+                                      switch (choice) {
+                                          case "1":
+                                              send("You entered in the Bathroom");
+                                              enteredRoom(BATHROOM);
+                                              // Falta metodo de chamar question
+                                              break;
+                                          case "2":
+                                              navigate();
+                                              break;
+                                          default:
+                                              invalidChoice();
+                                              displayBathroomMenu();
+                                              break;
+                                      }
+                                  }
+
+
+
+                           */
+
+
+                             /*
+                                           void handleKitchenDoorMenu() {
+                                               displayRoomMenu(RoomEnum.KITCHEN);
+                                           }
+
+                                           void handleBathroomMenu() {
+                                               displayRoomMenu(RoomEnum.BATHROOM);
+                                           }
+
+                                           void handleGymDoorMenu() {
+                                               displayRoomMenu(RoomEnum.GYM);
+                                           }
+
+                                           void handleBedroomDoorMenu() {
+                                               displayRoomMenu(RoomEnum.BEDROOM);
+                                           }
+
+                                           void handleOfficeDoorMenu() {
+                                               displayRoomMenu(RoomEnum.OFFICE);
+                                           }
+
+                                           void handleLivingRoomDoorMenu() {
+                                               displayRoomMenu(RoomEnum.LIVINGROOM);
+                                           }
+
+
+
+                                    */
+
+
+                                        /*
+
+                                                    private void displayBathroomMenu() {
+                                                        send(Menu.getBathroomDoorMenu());
+                                                        handleBathroomMenu();
+
+                                                    }
+
+                                                    private void displayKitchenMenu() {
+                                                        send(Menu.getKitchenDoorMenu());
+                                                        handleKitchenDoorMenu();
+                                                    }
+
+                                                    private void displayGymMenu() {
+                                                        send(Menu.getGymDoorMenu());
+                                                        handleGymDoorMenu();
+                                                    }
+
+
+
+                                                    private void displayBedroomMenu() {
+                                                        send(Menu.getBedroomDoorMenu());
+                                                        handleBedroomDoorMenu();
+                                                    }
+
+                                                    private void displayOfficeMenu() {
+                                                        send(Menu.getOfficeDoorMenu());
+                                                        handleOfficeDoorMenu();
+                                                    }
+
+                                                    private void displayLivingRoomMenu() {
+                                                        send(Menu.getLivingRoomDoorMenu());
+                                                        handleLivingRoomDoorMenu();
+
+                                                    }
+                                            */

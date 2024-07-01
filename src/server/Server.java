@@ -17,21 +17,17 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static rooms.RoomEnum.*;
-
 public class Server {
     private final int MAX_CLIENTS = 2;
     private List<ClientHandler> clientHandlers;
     private ServerSocket socket;
     private boolean running;
     private Castle castle;
-    // private ClientHandler clientHandler;
 
     public Server() {
         clientHandlers = new ArrayList<>(MAX_CLIENTS);
         castle = new Castle(this);
         running = true;
-        //System.out.println(castle.getRoom());
     }
 
     public static void main(String[] args) {
@@ -139,42 +135,11 @@ public class Server {
             handleMenu2();
         }
 
-        private void displayBathroomMenu() {
-            send(Menu.getBathroomDoorMenu());
-            handleBathroomMenu();
-
-        }
-
-        private void displayKitchenMenu() {
-            send(Menu.getKitchenDoorMenu());
-            handleKitchenDoorMenu();
-        }
-
-        private void displayGymMenu() {
-            send(Menu.getGymDoorMenu());
-            handleGymDoorMenu();
-        }
-
         private void displayMenu3() {
             send(Menu.getMenu3());
             handleMenu3();
         }
 
-        private void displayBedroomMenu() {
-            send(Menu.getBedroomDoorMenu());
-            handleBedroomDoorMenu();
-        }
-
-        private void displayOfficeMenu() {
-            send(Menu.getOfficeDoorMenu());
-            handleOfficeDoorMenu();
-        }
-
-        private void displayLivingRoomMenu() {
-            send(Menu.getLivingRoomDoorMenu());
-            handleLivingRoomDoorMenu();
-
-        }
 
         @Override
         public void run() {
@@ -195,20 +160,72 @@ public class Server {
             handleMainMenu();
         }
 
+
+        private boolean hasAllKeys() {
+            for (RoomEnum room : RoomEnum.values()) {
+                if (!keys.contains(room.getKey())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void handleExitMenu() {
+            send(Menu.getExitMenu());
+            String choice = getAnswer();
+            switch (choice) {
+                case "1":
+                    leaveCastle();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(2000);
+
+
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).start();
+
+                    break;
+                case "2":
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(1000);
+                            navigate();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        send(Menu.getMainMenu());
+                    }).start();
+
+
+                    break;
+                default:
+                    invalidMenuChoice();
+                    handleMainMenu();
+                    break;
+            }
+        }
+
         private void handleMainMenu() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
-                    displayBathroomMenu();
+                    send(Menu.getBathroomDoorMenu());
+                    handleRoomMenu(RoomEnum.BATHROOM);
                     break;
                 case "2":
                     displayMenu2();
                     break;
                 case "3":
-                    displayKitchenMenu();
+                    send(Menu.getKitchenDoorMenu());
+                    handleRoomMenu(RoomEnum.KITCHEN);
                     break;
                 case "4":
                     displayKeys();
+                    break;
+                case "9":
+                    handleExitMenu();
                     break;
                 default:
                     invalidMenuChoice();
@@ -218,6 +235,31 @@ public class Server {
             }
         }
 
+        private void leaveCastle() {
+            if (hasAllKeys()) {
+                send("You have successfully left the castle. Congratulations , you won!");
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    close();
+                }).start();
+            } else {
+                send("You cannot leave the castle. You are missing some keys");
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    send(Menu.getMainMenu());
+                    handleMainMenu();
+                }).start();
+
+            }
+        }
 
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = server.getCastle().getRoom(roomEnum);
@@ -243,7 +285,6 @@ public class Server {
           */
 
         }
-
 
         private void startRockPaperScissors(ClientHandler opponent) {
             send(Menu.getRockPaperScissorsMenu());
@@ -313,31 +354,49 @@ public class Server {
             }).start();
         }
 
+        private void handleRoomMenu(RoomEnum roomEnum) {
+            String choice = getAnswer();
+            switch (choice) {
+                case "1":
+                    send("You entered the " + roomEnum.getName());
+                    enteredRoom(roomEnum);
+                    break;
+                case "2":
+                    navigate();
+                    break;
+                default:
+                    invalidChoice();
+                    displayRoomMenu(roomEnum);
+                    break;
+            }
+        }
+
         private void displayRoomMenu(RoomEnum room) {
             switch (room) {
                 case BATHROOM:
-                    displayBathroomMenu();
+                    send(Menu.getBathroomDoorMenu());
                     break;
                 case KITCHEN:
-                    displayKitchenMenu();
+                    send(Menu.getKitchenDoorMenu());
                     break;
                 case GYM:
-                    displayGymMenu();
+                    send(Menu.getGymDoorMenu());
                     break;
                 case BEDROOM:
-                    displayBedroomMenu();
+                    send(Menu.getBedroomDoorMenu());
                     break;
                 case OFFICE:
-                    displayOfficeMenu();
+                    send(Menu.getOfficeDoorMenu());
                     break;
                 case LIVINGROOM:
-                    displayLivingRoomMenu();
+                    send(Menu.getLivingRoomDoorMenu());
                     break;
                 default:
                     send(Menu.getMainMenu());
                     handleMainMenu();
-                    break;
+                    return;
             }
+            handleRoomMenu(room);
         }
 
         private void resetInputStream() {
@@ -349,7 +408,6 @@ public class Server {
                 e.printStackTrace();
             }
         }
-
 
         private int determineWinner(String playerChoice, String opponentChoice) {
 
@@ -390,58 +448,21 @@ public class Server {
             }
         }
 
-        void handleKitchenDoorMenu() {
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in Kitchen");
-                    enteredRoom(KITCHEN);
-                    //question
-                    // questionHandler
-                    //Validar
-                    break;
-                case "2":
-                    navigate();
-
-                    break;
-                default:
-                    invalidChoice();
-                    displayKitchenMenu();
-                    break;
-            }
-        }
-
-
-        void handleBathroomMenu() {
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in the Bathroom");
-                    enteredRoom(BATHROOM);
-                    // Falta metodo de chamar question
-                    break;
-                case "2":
-                    navigate();
-                    break;
-                default:
-                    invalidChoice();
-                    displayBathroomMenu();
-                    break;
-            }
-        }
-
-
         void handleMenu2() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
-                    displayGymMenu();
+                    send(Menu.getGymDoorMenu());
+
+                    handleRoomMenu(RoomEnum.GYM);
                     break;
                 case "2":
                     displayMenu3();
                     break;
                 case "3":
-                    displayOfficeMenu();
+                    send(Menu.getOfficeDoorMenu());
+
+                    handleRoomMenu(RoomEnum.OFFICE);
                     break;
                 case "4":
                     navigate();
@@ -491,33 +512,16 @@ public class Server {
             return name;
         }
 
-        public void handleGymDoorMenu() {
-
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in the Gym");
-                    enteredRoom(GYM);
-                    //Metodo de question
-                    break;
-                case "2":
-                    displayMenu2();
-                    break;
-                default:
-                    invalidChoice();
-                    displayGymMenu();
-                    break;
-            }
-        }
-
         public void handleMenu3() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
-                    displayBedroomMenu();
+                    send(Menu.getBedroomDoorMenu());
+                    handleRoomMenu(RoomEnum.BEDROOM);
                     break;
                 case "2":
-                    displayLivingRoomMenu();
+                    send(Menu.getLivingRoomDoorMenu());
+                    handleRoomMenu(RoomEnum.LIVINGROOM);
                     break;
                 case "3":
                     displayMenu2();
@@ -554,60 +558,6 @@ public class Server {
                 send(message);
             }
 
-        }
-
-        public void handleBedroomDoorMenu() {
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in the Bedroom");
-                    enteredRoom(BEDROOM);
-                    //Metodo de question
-                    break;
-                case "2":
-                    displayMenu3();
-                    break;
-                default:
-                    invalidChoice();
-                    displayBedroomMenu();
-                    break;
-            }
-        }
-
-        public void handleLivingRoomDoorMenu() {
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in the Living Room");
-                    enteredRoom(LIVINGROOM);
-                    //Metodo de question
-                    break;
-                case "2":
-                    displayMenu3();
-                    break;
-                default:
-                    invalidChoice();
-                    displayLivingRoomMenu();
-                    break;
-            }
-        }
-
-        public void handleOfficeDoorMenu() {
-            String choice = getAnswer();
-            switch (choice) {
-                case "1":
-                    send("You entered in the Office");
-                    enteredRoom(OFFICE);
-                    //Metodo de question
-                    break;
-                case "2":
-                    displayMenu2();
-                    break;
-                default:
-                    invalidChoice();
-                    displayOfficeMenu();
-                    break;
-            }
         }
 
         public void close() {
