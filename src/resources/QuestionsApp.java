@@ -18,23 +18,8 @@ public class QuestionsApp {
         try (FileReader reader = new FileReader("src/resources/questions.json")) {
             Quiz quiz = gson.fromJson(reader, Quiz.class);
 
-            // List available subjects
-            System.out.println("Available subjects:");
-            for (String subject : quiz.getSubjects().keySet()) {
-                System.out.println("- " + subject);
-            }
-
             // Select a subject , TODO FIND A WAY TO CONNECT THE QUESTIONS PRESENTED TO THE ROOM WHERE THE PLAYER IS
             String selectedSubject = "Bathroom";
-            while (selectedSubject == null) {
-                System.out.print("Enter a subject: ");
-                String inputSubject = scanner.nextLine();
-                if (quiz.getSubjects().containsKey(inputSubject)) {
-                    selectedSubject = inputSubject;
-                } else {
-                    System.out.println("Subject not found. Please enter a valid subject.");
-                }
-            }
 
             List<Question> questions = quiz.getSubjects().get(selectedSubject);
             int randomIndex = random.nextInt(questions.size());
