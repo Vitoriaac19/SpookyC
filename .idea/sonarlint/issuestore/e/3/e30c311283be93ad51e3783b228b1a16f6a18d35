@@ -1,0 +1,18 @@
+
+P
+java:S11414"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+h
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(Çµí‘
+E	java:S106"+Replace this use of System.out by a logger.(‰¥¹×úÿÿÿÿ
+E	java:S106"+Replace this use of System.out by a logger.(­—ÁÎùÿÿÿÿ
+H
+java:S1135"2Complete the task associated to this TODO comment.(”Â¼¾
+@	java:S106"+Replace this use of System.out by a logger.(Ÿå‡Ù
+E	java:S106#"+Replace this use of System.out by a logger.(Ñäúşÿÿÿÿ
+@	java:S106,"+Replace this use of System.out by a logger.(ƒÄ»Õ
+@	java:S106/"+Replace this use of System.out by a logger.(‚ßƒÆ
+@	java:S1065"+Replace this use of System.out by a logger.(á‹ô»
+@	java:S1068"+Replace this use of System.out by a logger.(°–šÓ
+E	java:S106;"+Replace this use of System.out by a logger.(¢ñµşÿÿÿÿ
+@	java:S106A"+Replace this use of System.out by a logger.(²˜ÅÖ
+E	java:S106C"+Replace this use of System.out by a logger.(âíÄÎûÿÿÿÿ

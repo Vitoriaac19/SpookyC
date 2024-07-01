@@ -1,0 +1,68 @@
+
+	java:S112<"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$5a87eca0-a2dc-497f-8908-4ea9c3e4e712
+	java:S112v"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$4f402c5d-04d4-4309-8eb0-54eafe1f8772
+	java:S112¹"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$8cad1c98-0d41-4ad6-b4bf-585910653da4
+	java:S112Ä"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$223cedc4-c6e6-4b05-8a77-5ce1d0e9da0a
+	java:S112õ"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$4395d13f-3df4-488e-9f64-d531c9d61c9e
+	java:S112ÿ"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$59af73ba-9558-48d8-a6bb-b03f3589c145
+	java:S112é"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$f98a9d45-6ef6-4a15-8bfd-6e5aee1fa650
+	java:S112º"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Éøÿõ†2J$150d68f0-2632-4eb5-b8f1-0753fdf8beef
+`
+java:S1643¬"Use a StringBuilder instead.(ìÛç‚8Êøÿõ†2J$7ef9c7dd-a5dc-489b-b089-2661f314aa98
+
+java:S2095/"MUse try-with-resources or close this "ExecutorService" in a "finally" clause.(‡ıÜ®8Êøÿõ†2J$1acac64c-f897-4fa1-8785-9f35aeb8aae6
+—	java:S116"VRename this field "MAX_CLIENTS" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(…ÎƒH8Ëøÿõ†2J$b3a06a95-1e83-40a6-961b-715b11c1a328
+c
+java:S1170"!Make this final field static too.(…ÎƒH8Ëøÿõ†2J$efbf728b-3196-42eb-b565-a0bfefd1e08a
+
+java:S1450"URemove the "socket" field and declare it as a local variable in the relevant methods.(ë“ä‚øÿÿÿÿ8Ìøÿõ†2J$84042a42-4e08-4164-8f3d-b90cc25e9653
+|
+java:S3400("9Remove this method and declare a constant for this value.(î§¥ğ8Ïøÿõ†2J$e8d881f5-4326-431e-bce9-97ba3a9c3978
+l	java:S106B"+Replace this use of System.out by a logger.(·äğ8Ñøÿõ†2J$471a92c6-5cec-4714-862e-7dc97bde8e61
+u
+java:S1135i"2Complete the task associated to this TODO comment.(å‘Óº8Õøÿõ†2J$b992db3a-7596-4e7e-86d9-5a1459d8dd7d
+s	java:S106•"+Replace this use of System.out by a logger.(Â·Šõşÿÿÿÿ8Ùøÿõ†2J$0600c7fc-d03a-467e-aee7-976d730d4890
+v
+java:S6881µ"2Use virtual threads for heavy blocking operations.(¯ú™ú8Ûøÿõ†2J$409aa125-8a38-44b7-bb50-ddd2632bc370
+¢
+java:S2142¸"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8Üøÿõ†2J$657a19ae-1f9e-490c-bed4-9c7fffbd07a3
+{
+java:S6881Á"2Use virtual threads for heavy blocking operations.(»ãßºøÿÿÿÿ8İøÿõ†2J$176b7c29-90c3-4841-ba5f-0b3ed799b95d
+¢
+java:S2142Ã"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8İøÿõ†2J$65b936ea-3db1-41c0-a642-7a6ef73f0e63
+v
+java:S6881ó"2Use virtual threads for heavy blocking operations.(öÍËè8àøÿõ†2J$58fc79d8-5bdf-48ee-8b56-5bfe3b592981
+¢
+java:S2142ô"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8àøÿõ†2J$38adf922-fa2b-4904-af0a-e6c339bc7300
+v
+java:S6881ı"2Use virtual threads for heavy blocking operations.(öÍËè8áøÿõ†2J$49a3b71b-5452-45b5-83ae-755d1d508d2d
+¢
+java:S2142ş"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8áøÿõ†2J$23c3af99-3175-4c5d-87a3-68fc3666339e
+	java:S125—"<This block of commented-out lines of code should be removed.(ÀŒ¦8ãøÿõ†2J$91eeb802-de44-4fb5-ab51-24321f679fb3
+–
+java:S3776¡"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ÚÖï§8ãøÿõ†2J$8f0077e3-d74a-434f-8d09-9bd72e78b951
+
+java:S6880®"6Replace the chain of if/else with a switch expression.(™¦Ôêøÿÿÿÿ8åøÿõ†2J$b3eee41d-bbc0-4d54-a68e-d7e57de3add4
+v
+java:S6881½"2Use virtual threads for heavy blocking operations.(öÍËè8æøÿõ†2J$5693763a-8300-4006-bc62-11bec4ec8a00
+¢
+java:S2142¾"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8çøÿõ†2J$0d640b17-f4f8-4309-a9a1-3a6554321804
+v
+java:S6881È"2Use virtual threads for heavy blocking operations.(öÍËè8çøÿõ†2J$1f62b89f-4cc6-44ed-9cd4-d9774c3acefb
+¢
+java:S2142É"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8çøÿõ†2J$f8764ce0-9fbb-43ca-b910-de3ca966de4b
+v
+java:S6881×"2Use virtual threads for heavy blocking operations.(öÍËè8éøÿõ†2J$41b659c8-fb1e-4c85-94c9-3dd3c981c16d
+¢
+java:S2142Ø"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8éøÿõ†2J$377738bd-abc5-4cb9-900f-19761001249a
+Œ
+java:S2677•"HUse or store the value returned from "read" instead of throwing it away.(¦³—8íøÿõ†2J$86f5a011-9a95-4fed-9b1d-815368976077
+v
+java:S6881ç"2Use virtual threads for heavy blocking operations.(¯ú™ú8ğøÿõ†2J$a884d741-49e3-4e6e-8c64-417e5ec0567d
+¢
+java:S2142è"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8ğøÿõ†2J$bde78d63-8eb2-4d16-af33-56029a70c8f3
+n	java:S106ù"+Replace this use of System.out by a logger.(Üßùæ8òøÿõ†2J$c7a91173-4db3-4a1d-8705-dd0e1a476cda
+v
+java:S6881¢"2Use virtual threads for heavy blocking operations.(öÍËè8ôøÿõ†2J$2be8f1cc-774f-427f-bc58-17e2793198b6
+¢
+java:S2142£"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8ôøÿõ†2J$f9637498-a244-4a30-a66b-71c179f8908a
