@@ -30,6 +30,12 @@ public abstract class Room {
     public synchronized void enterRoom(Server.ClientHandler clientHandler) {
         clients.add(clientHandler);
         isOccupied = true;
+
+        if (clients.size() == 2) {
+            for (Server.ClientHandler clientHandler1 : clients) {
+                clientHandler1.send("Both players are in same room");
+            }
+        }
     }
 
     public synchronized void leaveRoom(Server.ClientHandler clientHandler) {
@@ -45,4 +51,7 @@ public abstract class Room {
         return clients.size() == 2;
     }
 
+    public List<Server.ClientHandler> getClients() {
+        return clients;
+    }
 }

@@ -5,6 +5,7 @@ public enum RoomEnum {
     BEDROOM(new Key("PILLOW"), RoomType.BEDROOM),
     BATHROOM(new Key("TOOTHBRUSH"), RoomType.BATHROOM),
     LIVINGROOM(new Key("REMOTE"), RoomType.LIVINGROOM),
+    GYM(new Key("DUMBELL"), RoomType.GYM),
     OFFICE(new Key("PEN"), RoomType.OFFICE);
 
 
