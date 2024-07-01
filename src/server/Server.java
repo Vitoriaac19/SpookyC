@@ -223,6 +223,8 @@ public class Server {
                     break;
                 case "4":
                     displayKeys();
+                    resetInputStream();
+                    handleMainMenu();
                     break;
                 case "9":
                     handleExitMenu();
@@ -469,6 +471,8 @@ public class Server {
                     break;
                 case "5":
                     displayKeys();
+                    resetInputStream();
+                    handleMainMenu();
                     break;
                 default:
                     invalidMenuChoice();
@@ -528,6 +532,8 @@ public class Server {
                     break;
                 case "4":
                     displayKeys();
+                    resetInputStream();
+                    handleMainMenu();
 
                     break;
                 default:
