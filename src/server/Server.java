@@ -2,6 +2,7 @@ package server;
 
 import castle.Castle;
 import menus.Menu;
+import resources.QuestionsApp;
 import rooms.Key;
 import rooms.Room;
 import rooms.RoomEnum;
@@ -106,7 +107,8 @@ public class Server {
         private List<Key> keys;
         private RoomEnum enteredRoom;
         private Server server;
-        private  String message;
+        private String message;
+        private QuestionsApp questionsApp;
 
 
         //TODO String mais compacta do que String message
@@ -163,7 +165,7 @@ public class Server {
 
         }
 
-        private void navigate() {
+        public void navigate() {
             send(Menu.getMainMenu());
             handleMainMenu();
         }
@@ -235,7 +237,7 @@ public class Server {
                     handleMainMenu();
                     break;
                 case "8":
-                displayHelp();
+                    displayHelp();
                 case "9":
                     handleExitMenu();
                     break;
@@ -256,6 +258,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
         }
+
         private void leaveCastle() {
             if (hasAllKeys()) {
                 send("You have successfully left the castle. Congratulations , you won!");
@@ -283,7 +286,7 @@ public class Server {
         }
 
 
-         public void handleHelp() throws IOException {
+        public void handleHelp() throws IOException {
             int maxString = 70;
             try {
                 message = in.readLine();
@@ -326,13 +329,14 @@ public class Server {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-               resetInputStream();
+                resetInputStream();
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
         }
+
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = server.getCastle().getRoom(roomEnum);
             room.enterRoom(this);
@@ -432,6 +436,7 @@ public class Server {
                 case "1":
                     send("You entered the " + roomEnum.getName());
                     enteredRoom(roomEnum);
+                    questionsApp.quiz(roomEnum, this);
                     break;
                 case "2":
                     navigate();
@@ -443,7 +448,7 @@ public class Server {
             }
         }
 
-        private void displayRoomMenu(RoomEnum room) {
+        public void displayRoomMenu(RoomEnum room) {
             switch (room) {
                 case BATHROOM:
                     send(Menu.getBathroomDoorMenu());
