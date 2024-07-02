@@ -22,7 +22,7 @@ public class Client {
     public void run() {
 
         try {
-            client = new Socket("localhost", 9000);
+            client = new Socket("localhost", 9002);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 

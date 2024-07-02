@@ -44,7 +44,7 @@ public class Server {
 
     public synchronized void start() {
         try {
-            socket = new ServerSocket(9000);
+            socket = new ServerSocket(9002);
             ExecutorService pool = Executors.newFixedThreadPool(MAX_CLIENTS);
 
 
@@ -110,7 +110,6 @@ public class Server {
         private String message;
         private QuestionsApp questionsApp = new QuestionsApp();
 
-
         //TODO String mais compacta do que String message
         public ClientHandler(Socket clientSocket, Server server) {
             this.clientSocket = clientSocket;
@@ -131,7 +130,6 @@ public class Server {
 
         }
 
-
         public List<Key> getKeys() {
             return keys;
         }
@@ -149,7 +147,6 @@ public class Server {
             send(Menu.getMenu3());
             handleMenu3();
         }
-
 
         @Override
         public void run() {
@@ -169,7 +166,6 @@ public class Server {
             send(Menu.getMainMenu());
             handleMainMenu();
         }
-
 
         private boolean hasAllKeys() {
             for (RoomEnum room : RoomEnum.values()) {
@@ -249,7 +245,6 @@ public class Server {
             }
         }
 
-
         private void displayHelp() {
             send(Menu.HELP);
             try {
@@ -284,7 +279,6 @@ public class Server {
 
             }
         }
-
 
         public void handleHelp() throws IOException {
             int maxString = 70;
@@ -363,6 +357,7 @@ public class Server {
         }
 
         private void startRockPaperScissors(ClientHandler opponent) {
+            
             send(Menu.getRockPaperScissorsMenu());
             opponent.send(Menu.getRockPaperScissorsMenu());
 
@@ -655,6 +650,8 @@ public class Server {
         private boolean isCommand(String message) {
             return message.startsWith("/");
         }
+
+
     }
 
 }
