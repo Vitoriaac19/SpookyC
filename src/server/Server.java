@@ -2,6 +2,7 @@ package server;
 
 import castle.Castle;
 import menus.Menu;
+import resources.QuestionsApp;
 import rooms.Key;
 import rooms.Room;
 import rooms.RoomEnum;
@@ -100,6 +101,7 @@ public class Server {
         private List<Key> keys;
         private RoomEnum enteredRoom;
         private Server server;
+        private QuestionsApp questionsApp = new QuestionsApp();
 
 
         //TODO String mais compacta do que String message
@@ -207,7 +209,7 @@ public class Server {
             }
         }
 
-        private void handleMainMenu() {
+        public void handleMainMenu() {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -356,12 +358,13 @@ public class Server {
             }).start();
         }
 
-        private void handleRoomMenu(RoomEnum roomEnum) {
+        public void handleRoomMenu(RoomEnum roomEnum) {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
                     send("You entered the " + roomEnum.getName());
                     enteredRoom(roomEnum);
+                    questionsApp.quiz(roomEnum, this);
                     break;
                 case "2":
                     navigate();
@@ -372,6 +375,7 @@ public class Server {
                     break;
             }
         }
+
 
         private void displayRoomMenu(RoomEnum room) {
             switch (room) {

@@ -1,62 +1,77 @@
 package resources;
 
 import com.google.gson.Gson;
+import rooms.RoomEnum;
+import server.Server;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class QuestionsApp {
-    public static void main(String[] args) {
-        Gson gson = new Gson();
-        Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
 
-        try (FileReader reader = new FileReader("src/resources/questions.json")) {
+    private Gson gson = new Gson();
+    private Random random = new Random();
+
+    private int getUserAnswer(Server.ClientHandler sender) {
+        int userAnswer = -1;
+        try {
+            while (userAnswer < 1 || userAnswer > 4) { // Assuming answers range from 1 to 4
+                sender.send("Write your answer: ");
+                String userInput = sender.getAnswer(); // Read input from client
+                userAnswer = Integer.parseInt(userInput.trim());
+                if (userAnswer < 1 || userAnswer > 4) {
+                    sender.send("Please enter a valid answer (1-4).");
+                }
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return userAnswer;
+    }
+
+    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) {
+        try (FileReader fileReader = new FileReader("src/resources/questions.json");
+             BufferedReader reader = new BufferedReader(fileReader)) {
+
             Quiz quiz = gson.fromJson(reader, Quiz.class);
+            List<Question> questions = quiz.getSubjects().get(roomEnum.getName().toUpperCase());
 
-            // Select a subject , TODO FIND A WAY TO CONNECT THE QUESTIONS PRESENTED TO THE ROOM WHERE THE PLAYER IS
-            String selectedSubject = "Bathroom";
+            if (questions == null || questions.isEmpty()) {
+                sender.send("No questions available for the " + roomEnum.getName() + " room.");
+                return;
+            }
 
-            List<Question> questions = quiz.getSubjects().get(selectedSubject);
             int randomIndex = random.nextInt(questions.size());
             Question randomQuestion = questions.get(randomIndex);
 
-            //Display the question on the console
-            System.out.println("Question " + randomQuestion.getQuestion());
+            // Display the question and options
+            sender.send(randomQuestion.getQuestion());
             List<String> answers = randomQuestion.getAnswers();
             for (int i = 0; i < answers.size(); i++) {
-                System.out.println((i + 1) + ". " + answers.get(i));
+                sender.send((i + 1) + ". " + answers.get(i));
             }
 
-            int userAnswer = -1;
-            while (userAnswer < 1 || userAnswer > answers.size()) {
-                try {
-                    System.out.print("Write your answer: ");
-                    userAnswer = scanner.nextInt();
-                    if (userAnswer < 1 || userAnswer > answers.size()) {
-                        System.out.println("Please enter a valid answer (1-" + answers.size() + ").");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                    scanner.next(); // Clear invalid input from the scanner
-                }
-            }
+            // Get user's answer
+            int userAnswer = getUserAnswer(sender);
 
-            if (userAnswer - 1 == randomQuestion.getCorrectAnswer()) {
-                System.out.println("Correct!");
+            // Validate user's answer
+            int correctAnswerIndex = randomQuestion.getCorrectAnswerIndex();
+            boolean isCorrect = (userAnswer - 1 == correctAnswerIndex); // Adjusting to zero-based index
+
+            // Process the result
+            if (isCorrect) {
+                sender.send("Correct answer! You received a key from this room.");
+                // Handle key distribution or other game logic
             } else {
-                System.out.println("Incorrect.");
+                sender.send("Wrong answer! You'll be kicked out from the room.");
+                // Handle kicking out or other game logic
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            scanner.close();
         }
     }
 }

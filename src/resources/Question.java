@@ -15,7 +15,7 @@ public class Question {
         return answers;
     }
 
-    public int getCorrectAnswer() {
+    public int getCorrectAnswerIndex() {
         return correctAnswer;
     }
 }
