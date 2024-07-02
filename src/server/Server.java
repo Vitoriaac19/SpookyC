@@ -90,6 +90,12 @@ public class Server {
         return castle;
     }
 
+    public void broadcast(String name, String message) {
+        clientHandlers.stream()
+                .filter(clientHandler -> !clientHandler.getName().equals(name))
+                .forEach(clientHandler -> clientHandler.send(name + ": " + message));
+    }
+
     //CLIENT HANDLER
     public class ClientHandler implements Runnable {
         boolean isconnected;
@@ -100,11 +106,13 @@ public class Server {
         private List<Key> keys;
         private RoomEnum enteredRoom;
         private Server server;
+        private  String message;
 
 
         //TODO String mais compacta do que String message
         public ClientHandler(Socket clientSocket, Server server) {
             this.clientSocket = clientSocket;
+
             this.name = "";
             this.isconnected = false;
             this.server = server;
@@ -226,6 +234,8 @@ public class Server {
                     resetInputStream();
                     handleMainMenu();
                     break;
+                case "8":
+                displayHelp();
                 case "9":
                     handleExitMenu();
                     break;
@@ -237,6 +247,15 @@ public class Server {
             }
         }
 
+
+        private void displayHelp() {
+            send(Menu.HELP);
+            try {
+                handleHelp();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         private void leaveCastle() {
             if (hasAllKeys()) {
                 send("You have successfully left the castle. Congratulations , you won!");
@@ -263,6 +282,57 @@ public class Server {
             }
         }
 
+
+         public void handleHelp() throws IOException {
+            int maxString = 70;
+            try {
+                message = in.readLine();
+
+                if (isCommand(message)) {
+                    String description = message.substring(0, 2);
+                    String modified = message.substring(3);
+
+                    switch (description) {
+                        case "/s":
+                            String upper = modified.toUpperCase();
+                            String limitedString = upper.length() > maxString ? upper.substring(0, maxString) : upper;
+                            broadcast(name, limitedString);
+
+                            break;
+
+                        case "/p":
+                            String lower = modified.toLowerCase();
+                            String privateString = lower.length() > maxString ? lower.substring(0, maxString) : lower;
+                            broadcast(name, privateString);
+
+                            break;
+
+                        case "/q":
+                            send("You are ending your game. See you again soon. Bye!");
+                            broadcast(name, "left the game");
+                            clientSocket.close();
+                            break;
+
+                        default:
+                            invalidChoice();
+                    }
+                }
+                if (message.equals("")) {
+                    send("Empty message!");
+                }
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+               resetInputStream();
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = server.getCastle().getRoom(roomEnum);
             room.enterRoom(this);
@@ -577,7 +647,9 @@ public class Server {
             }
         }
 
-
+        private boolean isCommand(String message) {
+            return message.startsWith("/");
+        }
     }
 
 }
