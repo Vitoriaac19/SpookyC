@@ -108,7 +108,7 @@ public class Server {
         private RoomEnum enteredRoom;
         private Server server;
         private String message;
-        private QuestionsApp questionsApp;
+        private QuestionsApp questionsApp = new QuestionsApp();
 
 
         //TODO String mais compacta do que String message
