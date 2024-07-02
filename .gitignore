@@ -2,6 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.idea/
+*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -27,41 +29,12 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### General ###
 /SpookyCastle.iml
-/.idea/vcs.xml
-/.idea/sonarlint/issuestore/1/a/1a63d93ac92e86eee02df4e4e7d9c9623d5577bc
-/.idea/sonarlint/issuestore/3/4/343ab91b7fe4febbd6378be1d6562d10af649ef7
-/.idea/sonarlint/issuestore/8/1/8193fb2cc2ecf8739f9f1baefa65a2cfc1f20008
-/.idea/sonarlint/issuestore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
-/.idea/sonarlint/issuestore/b/8/b8c3c283dd8fc2de57daee27a74d19196eeb3408
-/.idea/sonarlint/issuestore/e/c/ec9cd598e083997f08919777f2e54ae7c204f1d0
-/.idea/sonarlint/issuestore/index.pb
-/.idea/sonarlint/securityhotspotstore/1/a/1a63d93ac92e86eee02df4e4e7d9c9623d5577bc
-/.idea/sonarlint/securityhotspotstore/3/4/343ab91b7fe4febbd6378be1d6562d10af649ef7
-/.idea/sonarlint/securityhotspotstore/8/1/8193fb2cc2ecf8739f9f1baefa65a2cfc1f20008
-/.idea/sonarlint/securityhotspotstore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
-/.idea/sonarlint/securityhotspotstore/b/8/b8c3c283dd8fc2de57daee27a74d19196eeb3408
-/.idea/sonarlint/securityhotspotstore/e/c/ec9cd598e083997f08919777f2e54ae7c204f1d0
-/.idea/sonarlint/securityhotspotstore/index.pb
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/workspace.xml
 /SpookyC.iml
-/.idea/sonarlint/issuestore/1/4/14a3c5be1ca6058b2e297cba96b2e8a82cb2d159
-/.idea/sonarlint/issuestore/3/3/3305ff10725f16c1b29f7d63d18f973d59abc680
-/.idea/sonarlint/issuestore/3/8/38faf7a46b4c78f378f412c90beb59d369c7169e
-/.idea/sonarlint/issuestore/3/9/399eade187b745cd7f744697cc6a9aa14e85fb4b
-/.idea/sonarlint/issuestore/4/c/4ccfa9fa54d93919b3f15715e80b164f7a2b7a9c
-/.idea/sonarlint/issuestore/6/3/638b79b303be94bf642edb3c037d7b07055f20b7
-/.idea/sonarlint/issuestore/7/a/7a91f1694b1f134753ed927b7ee9494c8440a22d
-/.idea/sonarlint/issuestore/8/b/8b36b2eff8f58271075584ad7997b4e520282454
-/.idea/sonarlint/issuestore/9/1/91ae193594d652c4c6d9fd38798fd538a39a0012
-/.idea/sonarlint/securityhotspotstore/1/4/14a3c5be1ca6058b2e297cba96b2e8a82cb2d159
-/.idea/sonarlint/securityhotspotstore/3/3/3305ff10725f16c1b29f7d63d18f973d59abc680
-/.idea/sonarlint/securityhotspotstore/3/8/38faf7a46b4c78f378f412c90beb59d369c7169e
-/.idea/sonarlint/securityhotspotstore/3/9/399eade187b745cd7f744697cc6a9aa14e85fb4b
-/.idea/sonarlint/securityhotspotstore/4/c/4ccfa9fa54d93919b3f15715e80b164f7a2b7a9c
-/.idea/sonarlint/securityhotspotstore/6/3/638b79b303be94bf642edb3c037d7b07055f20b7
-/.idea/sonarlint/securityhotspotstore/7/a/7a91f1694b1f134753ed927b7ee9494c8440a22d
-/.idea/sonarlint/securityhotspotstore/8/b/8b36b2eff8f58271075584ad7997b4e520282454
-/.idea/sonarlint/securityhotspotstore/9/1/91ae193594d652c4c6d9fd38798fd538a39a0012
+
+# SonarLint specific files
+/.idea/sonarlint/issuestore/
+/.idea/sonarlint/securityhotspotstore/
+/.idea/
