@@ -2,6 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.idea/
+*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -27,7 +29,13 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### General ###
 /SpookyCastle.iml
-/.idea/vcs.xml
-.idea
-SpookyC.iml
+/SpookyC.iml
+
+# SonarLint specific files
+/.idea/sonarlint/issuestore/
+/.idea/sonarlint/securityhotspotstore/
+
+/.idea/

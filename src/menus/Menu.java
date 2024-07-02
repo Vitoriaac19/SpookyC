@@ -2,6 +2,19 @@ package menus;
 
 public class Menu {
 
+
+    public static final String HELP = """ 
+        +--------------------------------------------------+
+        +------------List of available commands:-----------+
+        +--------------------------------------------------+
+        | [/p + <message>] Speak only to your opponent     |
+        | [/s + <message>] Shout at your opponent          |
+        | [/q + <space>] Exits the server                  |
+        +--------------------------------------------------+
+        > """;
+
+    public static final String COMMAND_NOT_FOUND = "Invalid command!";
+
     public static String getMainMenu() {
         return "+--------------------------------------------------+\n" +
                 "+ ------------Entrance Hall------------------------+\n" +
@@ -14,6 +27,7 @@ public class Menu {
                 "| [4] Check Inventory                              |\n" +
                 "+--------------------------------------------------+\n" +
                 "+--------------------------------------------------+\n" +
+                "+ [8] Help - List of available commands...         |\n" +
                 "+ [9] Exit Castle... Do you have all keys?         |\n" +
                 "+--------------------------------------------------+\n" +
                 "+--------------------------------------------------+\n" +
