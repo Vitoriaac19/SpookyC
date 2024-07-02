@@ -73,6 +73,7 @@ public class Server {
 
 
     public void acceptPlayer(ClientHandler clientHandler) {
+
         if (clientHandlers.size() < MAX_CLIENTS) {
             addClient(clientHandler);
             clientHandler.isconnected = true;
@@ -155,6 +156,7 @@ public class Server {
             send("enter your name: ");
             name = getAnswer();
             System.out.println(name + " has joined the game");
+
 
             //   clientHandlers.add(this); //VERIFICAR
 
@@ -368,15 +370,19 @@ public class Server {
 
             int result = determineWinner(playerChoice, opponentChoice);
             if (result == 1) {
+
                 send("You won! You receive a key from this room as a reward.");
                 opponent.send("You lost! Your opponent receives a key from this room as a reward.");
                 addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 opponent.leaveRoom();
+
             } else if (result == -1) {
+
                 send("You lost! Your opponent receives a key from this room as a reward.");
                 opponent.send("You won! You receive a key from this room as a reward.");
                 opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 leaveRoom();
+
             } else {
                 send("It's a draw!");
                 opponent.send("It's a draw!");
@@ -420,6 +426,14 @@ public class Server {
                     opponent.handleMainMenu();
                 }
             }).start();
+        }
+
+        private void stealKey(ClientHandler clientHandler) {
+            send("estou no steal");
+           /* Random random = new Random();
+            int rand = random.nextInt(0, clientHandler.getKeys().size());
+            Key num = clientHandler.getKeys().remove(rand);
+            System.out.println("the key stolen was " + num.toString());*/
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) {
