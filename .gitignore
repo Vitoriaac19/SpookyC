@@ -37,4 +37,5 @@ bin/
 # SonarLint specific files
 /.idea/sonarlint/issuestore/
 /.idea/sonarlint/securityhotspotstore/
+
 /.idea/
