@@ -372,14 +372,18 @@ public class Server {
             if (result == 1) {
 
                 send("You won! You receive a key from this room as a reward.");
-                opponent.send("You lost! Your opponent receives a key from this room as a reward.");
+                //opponent.send("You lost! Your opponent receives a key from this room as a reward.");
+                opponent.send("I AM HERE");
                 addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 opponent.leaveRoom();
 
             } else if (result == -1) {
 
-                send("You lost! Your opponent receives a key from this room as a reward.");
-                opponent.send("You won! You receive a key from this room as a reward.");
+                send("I AM HERE");
+                //send("You lost! Your opponent receives a key from this room as a reward.");
+                //opponent.send("You won! You receive a key from this room as a reward.");
+                stealKey(opponent);
+                opponent.send("I AM HERE");
                 opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                 leaveRoom();
 
@@ -429,7 +433,7 @@ public class Server {
         }
 
         private void stealKey(ClientHandler clientHandler) {
-            send("estou no steal");
+            System.out.println("estou no steal");
            /* Random random = new Random();
             int rand = random.nextInt(0, clientHandler.getKeys().size());
             Key num = clientHandler.getKeys().remove(rand);
