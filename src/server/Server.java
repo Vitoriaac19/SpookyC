@@ -106,7 +106,7 @@ public class Server {
         private List<Key> keys;
         private RoomEnum enteredRoom;
         private Server server;
-        private  String message;
+        private String message;
 
 
         //TODO String mais compacta do que String message
@@ -235,7 +235,7 @@ public class Server {
                     handleMainMenu();
                     break;
                 case "8":
-                displayHelp();
+                    displayHelp();
                 case "9":
                     handleExitMenu();
                     break;
@@ -256,6 +256,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
         }
+
         private void leaveCastle() {
             if (hasAllKeys()) {
                 send("You have successfully left the castle. Congratulations , you won!");
@@ -283,7 +284,7 @@ public class Server {
         }
 
 
-         public void handleHelp() throws IOException {
+        public void handleHelp() throws IOException {
             int maxString = 70;
             try {
                 message = in.readLine();
@@ -326,13 +327,14 @@ public class Server {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-               resetInputStream();
+                resetInputStream();
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
         }
+
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = server.getCastle().getRoom(roomEnum);
             room.enterRoom(this);
@@ -348,13 +350,7 @@ public class Server {
                     }
                 }
             }
-         /*   send("Ola");
-            send("You entered " + roomEnum.getName());
-            send("DEBUG: " + name + " entered room " + roomEnum.getName());
-            send("DEBUG: Current room clients: " + room.getClients());
 
-
-          */
 
         }
 
@@ -632,6 +628,15 @@ public class Server {
                     message = message + key + "\n";
                 }
                 send(message);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(2000);
+                        send(Menu.getMainMenu());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }).start();
             }
 
         }
