@@ -14,6 +14,7 @@ public class QuestionsApp {
 
     private Gson gson = new Gson();
     private Random random = new Random();
+    private Server server;
 
     private int getUserAnswer(Server.ClientHandler sender) {
         int userAnswer = -1;
@@ -32,7 +33,7 @@ public class QuestionsApp {
         return userAnswer;
     }
 
-    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) {
+    public boolean quiz(RoomEnum roomEnum, Server.ClientHandler sender) {
         try (FileReader fileReader = new FileReader("src/resources/questions.json");
              BufferedReader reader = new BufferedReader(fileReader)) {
 
@@ -41,7 +42,7 @@ public class QuestionsApp {
 
             if (questions == null || questions.isEmpty()) {
                 sender.send("No questions available for the " + roomEnum.getName() + " room.");
-                return;
+                return false;
             }
 
             int randomIndex = random.nextInt(questions.size());
@@ -63,15 +64,33 @@ public class QuestionsApp {
 
             // Process the result
             if (isCorrect) {
-                sender.send("Correct answer! You received a key from this room.");
-                // Handle key distribution or other game logic
+                sender.send("Correct answer!");
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(2000);
+                        sender.displayRoomMenu(roomEnum);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+
             } else {
                 sender.send("Wrong answer! You'll be kicked out from the room.");
-                // Handle kicking out or other game logic
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(2000);
+                        sender.navigate();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             }
 
+            return isCorrect;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
+
 }

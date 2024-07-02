@@ -157,7 +157,7 @@ public class Server {
 
         }
 
-        private void navigate() {
+        public void navigate() {
             send(Menu.getMainMenu());
             handleMainMenu();
         }
@@ -377,7 +377,7 @@ public class Server {
         }
 
 
-        private void displayRoomMenu(RoomEnum room) {
+        public void displayRoomMenu(RoomEnum room) {
             switch (room) {
                 case BATHROOM:
                     send(Menu.getBathroomDoorMenu());
