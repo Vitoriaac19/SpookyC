@@ -2,6 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.idea/
+*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -27,22 +29,13 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### General ###
 /SpookyCastle.iml
-/.idea/vcs.xml
-/.idea/sonarlint/issuestore/1/a/1a63d93ac92e86eee02df4e4e7d9c9623d5577bc
-/.idea/sonarlint/issuestore/3/4/343ab91b7fe4febbd6378be1d6562d10af649ef7
-/.idea/sonarlint/issuestore/8/1/8193fb2cc2ecf8739f9f1baefa65a2cfc1f20008
-/.idea/sonarlint/issuestore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
-/.idea/sonarlint/issuestore/b/8/b8c3c283dd8fc2de57daee27a74d19196eeb3408
-/.idea/sonarlint/issuestore/e/c/ec9cd598e083997f08919777f2e54ae7c204f1d0
-/.idea/sonarlint/issuestore/index.pb
-/.idea/sonarlint/securityhotspotstore/1/a/1a63d93ac92e86eee02df4e4e7d9c9623d5577bc
-/.idea/sonarlint/securityhotspotstore/3/4/343ab91b7fe4febbd6378be1d6562d10af649ef7
-/.idea/sonarlint/securityhotspotstore/8/1/8193fb2cc2ecf8739f9f1baefa65a2cfc1f20008
-/.idea/sonarlint/securityhotspotstore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
-/.idea/sonarlint/securityhotspotstore/b/8/b8c3c283dd8fc2de57daee27a74d19196eeb3408
-/.idea/sonarlint/securityhotspotstore/e/c/ec9cd598e083997f08919777f2e54ae7c204f1d0
-/.idea/sonarlint/securityhotspotstore/index.pb
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/workspace.xml
+/SpookyC.iml
+
+# SonarLint specific files
+/.idea/sonarlint/issuestore/
+/.idea/sonarlint/securityhotspotstore/
+
+/.idea/
