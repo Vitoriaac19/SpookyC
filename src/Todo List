@@ -1,3 +1,9 @@
 Player não receber a mensagem que entrou apenas o servidor e os outros players.
-Se o name for null, levar disconnect.
-Rever pedra papel tesoura por causa das mensagens
+
+Ajustar regras do name - sem numeros, carac especiais
+Adicionar chave a resposta certa
+Limpar consola sempre que receber resposta do menu
+Ajustar Strings - limite de imput
+Criar uma classe só para as Strings
+Limitar chaves - 1 por quarto
+Verificar se a chave roubada é igual a alguma que ja existe, se sim, não adicionar
