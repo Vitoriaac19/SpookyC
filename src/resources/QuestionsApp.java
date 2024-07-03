@@ -16,23 +16,26 @@ public class QuestionsApp {
 
     // Helper method to track the first correct answer for each room
     private static final Map<RoomEnum, Boolean> firstCorrectAnswerMap = new HashMap<>();
-    private Gson gson = new Gson();
-    private Random random = new Random();
-    private Server server;
+    private final Gson gson = new Gson();
+    private final Random random = new Random();
 
     private int getUserAnswer(Server.ClientHandler sender) {
         int userAnswer = -1;
-        try {
-            while (userAnswer < 1 || userAnswer > 4) { // Assuming answers range from 1 to 4
+        boolean validInput = false;
+        while (!validInput) {
+            try {
                 sender.send("Write your answer: ");
-                String userInput = sender.getAnswer(); // Read input from client
-                userAnswer = Integer.parseInt(userInput.trim());
-                if (userAnswer < 1 || userAnswer > 4) {
+                String userInput = sender.getAnswer().trim(); // Read input from client and trim whitespace
+                userAnswer = Integer.parseInt(userInput);
+
+                if (userAnswer >= 1 && userAnswer <= 4) {
+                    validInput = true;
+                } else {
                     sender.send("Please enter a valid answer (1-4).");
                 }
+            } catch (NumberFormatException e) {
+                sender.send("Please enter a valid numeric answer (1-4).");
             }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
         return userAnswer;
     }
@@ -64,7 +67,7 @@ public class QuestionsApp {
 
             // Validate user's answer
             int correctAnswerIndex = randomQuestion.getCorrectAnswerIndex();
-            boolean isCorrect = (userAnswer - 1 == correctAnswerIndex); // Adjusting to zero-based index
+            boolean isCorrect = (userAnswer - 1 == correctAnswerIndex); // Adjusting the index
 
             // Process the result
             if (isCorrect) {
@@ -81,23 +84,31 @@ public class QuestionsApp {
                 // Set that a correct answer has been given for this room
                 setFirstCorrectAnswer(roomEnum);
 
-                // Navigate or display room menu after a delay
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(2000);
-                        sender.displayRoomMenu(roomEnum);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
+            } else {
+                sender.send("Your answer is incorrect! You'll be kicked out from the room.");
             }
 
-            return isCorrect;
+            // Navigate or display room menu after a delay
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000);
+                    if (isCorrect) {
+                        sender.displayRoomMenu(roomEnum);
+                        ;
+                    } else {
+                        sender.navigate();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
-        } finally {
         }
+
+        return true;
     }
 
     private synchronized boolean isFirstCorrectAnswer(RoomEnum roomEnum) {
