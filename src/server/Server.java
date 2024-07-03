@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -172,6 +173,10 @@ public class Server {
             new Thread(() -> {
                 send("Enter your name: ");
                 name = getAnswer();
+                while (!name.matches("[a-zA-Z]+")) {
+                    send("Please, enter your name using only letters: ");
+                    name = getAnswer();
+                }
                 System.out.println(name + " has joined the game");
                 send(Menu.getWelcomeMessage());
                 navigate();
@@ -323,14 +328,26 @@ public class Server {
 
                         case "/s":
                             String upper = modified.toUpperCase();
-                            String limitedString = upper.length() > maxString ? upper.substring(0, maxString) : upper;
+                            String limitedString;
+
+                            if (upper.length() > maxString) {
+                                limitedString = upper.substring(0, maxString);
+                            } else {
+                                limitedString = upper;
+                            }
                             broadcast(name, limitedString);
 
                             break;
 
                         case "/p":
                             String lower = modified.toLowerCase();
-                            String privateString = lower.length() > maxString ? lower.substring(0, maxString) : lower;
+                            String privateString;
+
+                            if (lower.length() > maxString) {
+                                privateString = lower.substring(0, maxString);
+                            } else {
+                                privateString = lower;
+                            }
                             broadcast(name, privateString);
 
                             break;
@@ -372,6 +389,7 @@ public class Server {
                     if (client != this) {
                         send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
                         client.send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
+                        resetInputStream();
                         startRockPaperScissors(client);
                         break;
                     }
@@ -407,12 +425,13 @@ public class Server {
                 if (result == 1) {
                     send("You won! You receive a key from this room as a reward.");
                     opponent.send("You lost! Your opponent receives a key from this room as a reward.");
-                    addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
+                    //addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
+                    stealKey(opponent);
                     opponent.leaveRoom();
                 } else if (result == -1) {
                     send("You lost! Your opponent receives a key from this room as a reward.");
                     opponent.send("You won! You receive a key from this room as a reward.");
-                    opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
+                    //opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
                     leaveRoom();
                 } else {
                     send("It's a draw!");
@@ -440,6 +459,20 @@ public class Server {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        private void stealKey(ClientHandler clientHandler) {
+            Random random = new Random();
+            List<Key> opponentKeys = clientHandler.getKeys();
+            if (opponentKeys.size() == 0) {
+                send("You don't have any keys to steal.");
+                return;
+            }
+            int randIndex = random.nextInt(opponentKeys.size());
+            Key stolenKey = opponentKeys.remove(randIndex);
+
+            send("You have stolen a key from " + clientHandler.getName() + ": " + stolenKey);
+            clientHandler.send("Your key has been stolen: " + stolenKey);
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) {
