@@ -90,6 +90,7 @@ public class QuestionsApp {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } finally {
         }
     }
 

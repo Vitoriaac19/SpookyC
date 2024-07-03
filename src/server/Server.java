@@ -51,9 +51,16 @@ public class Server {
             while (running) {
                 Socket clientSocket = socket.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-                acceptPlayer(clientHandler);
-                pool.submit(clientHandler);
+                if (acceptPlayer(clientHandler)) {
+                    pool.submit(clientHandler);
+                } else {
+                    clientHandler.close();
+                }
 
+                if (clientHandlers.size() == MAX_CLIENTS) {
+                    System.out.println("Maximum number of players reached");
+                    startGame();
+                }
 
             }
 
@@ -68,18 +75,29 @@ public class Server {
     }
 
 
+    public void startGame() {
+        System.out.println("Starting game");
+        for (ClientHandler clientHandler : clientHandlers) {
+            clientHandler.startGame();
+        }
+    }
+
     public List<ClientHandler> getClientHandlers() {
         return clientHandlers;
     }
 
 
-    public void acceptPlayer(ClientHandler clientHandler) {
+    public synchronized boolean acceptPlayer(ClientHandler clientHandler) {
         if (clientHandlers.size() < MAX_CLIENTS) {
             addClient(clientHandler);
-            clientHandler.isconnected = true;
+            System.out.println("Player connected . Total players: " + clientHandlers.size());
+
+            clientHandler.send("Waiting for other players");
+
+            return true;
         } else {
             clientNotAccepted(clientHandler, "We dont have space yet. Please try again later.");
-            clientHandler.close();
+            return false;
         }
     }
 
@@ -130,6 +148,7 @@ public class Server {
 
         }
 
+
         public List<Key> getKeys() {
             return keys;
         }
@@ -148,17 +167,28 @@ public class Server {
             handleMenu3();
         }
 
+
+        public void startGame() {
+            new Thread(() -> {
+                send("Enter your name: ");
+                name = getAnswer();
+                System.out.println(name + " has joined the game");
+                send(Menu.getWelcomeMessage());
+                navigate();
+            }).start();
+        }
+
+
         @Override
         public void run() {
 
-            send("enter your name: ");
-            name = getAnswer();
-            System.out.println(name + " has joined the game");
-
-            //   clientHandlers.add(this); //VERIFICAR
-
-            send(Menu.getWelcomeMessage());
-            navigate();
+            while (!isconnected) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
         }
 
@@ -290,6 +320,7 @@ public class Server {
                     String modified = message.substring(3);
 
                     switch (description) {
+
                         case "/s":
                             String upper = modified.toUpperCase();
                             String limitedString = upper.length() > maxString ? upper.substring(0, maxString) : upper;
@@ -357,72 +388,58 @@ public class Server {
         }
 
         private void startRockPaperScissors(ClientHandler opponent) {
-            
-            send(Menu.getRockPaperScissorsMenu());
-            opponent.send(Menu.getRockPaperScissorsMenu());
+            try {
+                resetInputStream();
+                // opponent.resetInputStream();
 
-            String playerChoice = getAnswer();
-            send("You have chosen " + choiceToString(playerChoice));
-            opponent.send("Other player has already made a choice");
+                send(Menu.getRockPaperScissorsMenu());
+                opponent.send(Menu.getRockPaperScissorsMenu());
 
-            String opponentChoice = opponent.getAnswer();
-            opponent.send("You have chosen " + choiceToString(opponentChoice));
-            send("Other player has already made a choice");
+                String playerChoice = getAnswer();
+                send("You have chosen " + choiceToString(playerChoice));
 
-            int result = determineWinner(playerChoice, opponentChoice);
-            if (result == 1) {
-                send("You won! You receive a key from this room as a reward.");
-                opponent.send("You lost! Your opponent receives a key from this room as a reward.");
-                addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
-                opponent.leaveRoom();
-            } else if (result == -1) {
-                send("You lost! Your opponent receives a key from this room as a reward.");
-                opponent.send("You won! You receive a key from this room as a reward.");
-                opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
-                leaveRoom();
-            } else {
-                send("It's a draw!");
-                opponent.send("It's a draw!");
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    startRockPaperScissors(opponent);
-                }).start();
-                return;
-            }
+                opponent.send("Other player has already made a choice");
+                String opponentChoice = opponent.getAnswer();
+                opponent.send("You have chosen " + choiceToString(opponentChoice));
 
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                int result = determineWinner(playerChoice, opponentChoice);
+
+                if (result == 1) {
+                    send("You won! You receive a key from this room as a reward.");
+                    opponent.send("You lost! Your opponent receives a key from this room as a reward.");
+                    addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
+                    opponent.leaveRoom();
+                } else if (result == -1) {
+                    send("You lost! Your opponent receives a key from this room as a reward.");
+                    opponent.send("You won! You receive a key from this room as a reward.");
+                    opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
+                    leaveRoom();
+                } else {
+                    send("It's a draw!");
+                    opponent.send("It's a draw!");
                 }
+
+                Thread.sleep(3000);
+
                 if (result == 1) {
                     displayRoomMenu(enteredRoom);
-                } else {
+                } else if (result == -1) {
                     send(Menu.getMainMenu());
                     resetInputStream();
                     handleMainMenu();
-                }
-            }).start();
-
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (result == -1) {
-                    opponent.displayRoomMenu(opponent.enteredRoom);
                 } else {
-                    opponent.send(Menu.getMainMenu());
-                    opponent.resetInputStream();
-                    opponent.handleMainMenu();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        startRockPaperScissors(opponent);
+                    }).start();
                 }
-            }).start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) {

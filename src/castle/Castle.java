@@ -40,6 +40,8 @@ public class Castle {
 
             case BATHROOM:
                 return new Bathroom(roomEnum.getKey());
+            case GYM:
+                return new Gym(roomEnum.getKey());
 
             case BEDROOM:
                 return new Bedroom(roomEnum.getKey());
