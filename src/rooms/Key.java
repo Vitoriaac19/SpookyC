@@ -7,6 +7,8 @@ public class Key {
         this.name = name;
     }
 
-    public Key() {
+    @Override
+    public String toString() {
+        return name ;
     }
 }
