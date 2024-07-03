@@ -7,11 +7,15 @@ import server.Server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class QuestionsApp {
 
+    // Helper method to track the first correct answer for each room
+    private static final Map<RoomEnum, Boolean> firstCorrectAnswerMap = new HashMap<>();
     private Gson gson = new Gson();
     private Random random = new Random();
     private Server server;
@@ -64,22 +68,24 @@ public class QuestionsApp {
 
             // Process the result
             if (isCorrect) {
-                sender.send("Correct answer!");
+                // Check if this is the first correct answer
+                if (isFirstCorrectAnswer(roomEnum)) {
+                    sender.send("Correct answer! You win a key!");
+
+                    // Give the player a key
+                    sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
+                } else {
+                    sender.send("Correct answer! You win nothing, someone already won a key.");
+                }
+
+                // Set that a correct answer has been given for this room
+                setFirstCorrectAnswer(roomEnum);
+
+                // Navigate or display room menu after a delay
                 new Thread(() -> {
                     try {
                         Thread.sleep(2000);
                         sender.displayRoomMenu(roomEnum);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-
-            } else {
-                sender.send("Wrong answer! You'll be kicked out from the room.");
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(2000);
-                        sender.navigate();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -92,6 +98,14 @@ public class QuestionsApp {
             return false;
         } finally {
         }
+    }
+
+    private synchronized boolean isFirstCorrectAnswer(RoomEnum roomEnum) {
+        return !firstCorrectAnswerMap.containsKey(roomEnum) || !firstCorrectAnswerMap.get(roomEnum);
+    }
+
+    private synchronized void setFirstCorrectAnswer(RoomEnum roomEnum) {
+        firstCorrectAnswerMap.put(roomEnum, true);
     }
 
 }
