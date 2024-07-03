@@ -56,6 +56,7 @@ public class QuestionsApp {
             Question randomQuestion = questions.get(randomIndex);
 
             // Display the question and options
+            sender.send(ascii_art.Question.QUESTION);
             sender.send(randomQuestion.getQuestion());
             List<String> answers = randomQuestion.getAnswers();
             for (int i = 0; i < answers.size(); i++) {
