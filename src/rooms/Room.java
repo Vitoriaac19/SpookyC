@@ -9,14 +9,13 @@ public abstract class Room {
     private boolean isOccupied;
     private List<Server.ClientHandler> clients;
     private Key key;
-
+    private boolean occupied;
 
     public Room(Key key) {
         this.isOccupied = false;
         this.clients = new ArrayList<>();
         this.key = key;
     }
-
 
     public synchronized Key getKey() {
         return key;
@@ -26,6 +25,9 @@ public abstract class Room {
         return isOccupied;
     }
 
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
+    }
 
     public synchronized void enterRoom(Server.ClientHandler clientHandler) {
         clients.add(clientHandler);
