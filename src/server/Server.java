@@ -1,5 +1,7 @@
 package server;
 
+import ascii_art.BigWinner;
+import ascii_art.SpookyCastle;
 import castle.Castle;
 import menus.Menu;
 import resources.QuestionsApp;
@@ -171,6 +173,7 @@ public class Server {
 
         public void startGame() {
             new Thread(() -> {
+                send(SpookyCastle.SPOOKY_CASTLE);
                 send("Enter your name: ");
                 name = getAnswer();
                 while (!name.matches("[a-zA-Z]+")) {
@@ -291,6 +294,7 @@ public class Server {
 
         private void leaveCastle() {
             if (hasAllKeys()) {
+                send(BigWinner.BIG_WINNER);
                 send("You have successfully left the castle. Congratulations , you won!");
                 new Thread(() -> {
                     try {
@@ -700,7 +704,6 @@ public class Server {
         private boolean isCommand(String message) {
             return message.startsWith("/");
         }
-
 
     }
 
