@@ -28,6 +28,9 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The Server class handles client connections, game initialization, and game interactions.
+ */
 public class Server {
     private final int MAX_CLIENTS = 2;
     private final List<ClientHandler> clientHandlers;
@@ -35,12 +38,20 @@ public class Server {
     private final Castle castle;
     private ServerSocket socket;
 
+    /**
+     * Constructs a new Server instance.
+     */
     public Server() {
         clientHandlers = new ArrayList<>(MAX_CLIENTS);
         castle = new Castle(this);
         running = true;
     }
 
+    /**
+     * The main method to start the server.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         Server server = new Server();
         try {
@@ -57,12 +68,17 @@ public class Server {
     }
 
 
+    /**
+     * Starts the server and accepts client connections.
+     */
     public synchronized void start() throws ServerStartupException {
+
         try {
             socket = new ServerSocket(9000);
             ExecutorService pool = Executors.newFixedThreadPool(MAX_CLIENTS);
 
             while (running) {
+
                 try {
                     Socket clientSocket = socket.accept();
                     ClientHandler clientHandler = new ClientHandler(clientSocket);
@@ -85,12 +101,19 @@ public class Server {
         }
     }
 
+    /**
+     * Adds a client to the list of connected clients.
+     *
+     * @param clientHandler the client handler to add
+     */
     public synchronized void addClient(ClientHandler clientHandler) {
         clientHandlers.add(clientHandler);
         System.out.println(getClientHandlers().size());
     }
 
-
+    /**
+     * Starts the game for all connected clients.
+     */
     public void startGame() {
         System.out.println("Starting game");
         for (ClientHandler clientHandler : clientHandlers) {
@@ -98,11 +121,21 @@ public class Server {
         }
     }
 
+    /**
+     * Returns the list of connected client handlers.
+     *
+     * @return the list of client handlers
+     */
     public List<ClientHandler> getClientHandlers() {
         return clientHandlers;
     }
 
-
+    /**
+     * Accepts a player if the maximum number of clients has not been reached.
+     *
+     * @param clientHandler the client handler to accept
+     * @return true if the player was accepted, false otherwise
+     */
     public synchronized boolean acceptPlayer(ClientHandler clientHandler) {
         if (clientHandlers.size() < MAX_CLIENTS) {
             addClient(clientHandler);
@@ -112,11 +145,17 @@ public class Server {
 
             return true;
         } else {
-            clientNotAccepted(clientHandler, "We dont have space yet. Please try again later.");
+            clientNotAccepted(clientHandler, "We don't have space yet. Please try again later.");
             return false;
         }
     }
 
+    /**
+     * Sends a message to a client indicating they were not accepted.
+     *
+     * @param clientHandler the client handler to notify
+     * @param message       the message to send
+     */
     public void clientNotAccepted(ClientHandler clientHandler, String message) {
         clientHandler.send(message);
     }
@@ -125,13 +164,21 @@ public class Server {
         return castle;
     }
 
+    /**
+     * Broadcasts a message to all clients except the sender.
+     *
+     * @param name    the name of the sender
+     * @param message the message to broadcast
+     */
     public void broadcast(String name, String message) {
         clientHandlers.stream()
                 .filter(clientHandler -> !clientHandler.getName().equals(name))
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
     }
 
-    //CLIENT HANDLER
+    /**
+     * The ClientHandler class handles interactions with a connected client.
+     */
     public class ClientHandler implements Runnable {
         private final BufferedReader in;
         private final PrintWriter out;
@@ -143,7 +190,11 @@ public class Server {
         private RoomEnum enteredRoom;
         private Audio music;
 
-        //TODO String mais compacta do que String message
+        /**
+         * Constructs a new ClientHandler instance.
+         *
+         * @param clientSocket the client socket
+         */
         public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
 
@@ -163,11 +214,20 @@ public class Server {
 
         }
 
-
+        /**
+         * Returns the list of keys the client has.
+         *
+         * @return the list of keys
+         */
         public List<Key> getKeys() {
             return keys;
         }
 
+        /**
+         * Adds a key to the client's key list.
+         *
+         * @param key the key to add
+         */
         public void addKey(Key key) {
             for (Key existingKey : keys) {
                 if (existingKey.equals(key)) {
@@ -189,7 +249,9 @@ public class Server {
             handleMenu3();
         }
 
-
+        /**
+         * Starts the game for the client.
+         */
         public void startGame() {
             new Thread(() -> {
                 try {
@@ -226,7 +288,12 @@ public class Server {
 
         }
 
+
+        /**
+         * Navigates the client through the main menu.
+         */
         public void navigate() throws QuestionLoadException {
+
             send(Menu.getMainMenu());
             handleMainMenu();
         }
@@ -351,6 +418,11 @@ public class Server {
         }
 
 
+        /**
+         * Handles client commands from the help menu.
+         *
+         * @throws IOException if an I/O error occurs
+         */
         public void handleHelp() throws IOException {
             int maxString = 70;
             try {
@@ -419,28 +491,13 @@ public class Server {
             Room room = getCastle().getRoom(roomEnum);
             room.enterRoom(this);
             enteredRoom = roomEnum;
-            List<ClientHandler> clientsInRoom = room.getClients();
-            if (clientsInRoom.size() > 1) {
-                for (ClientHandler client : clientsInRoom) {
-                    if (client != this) {
-                        send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
-                        client.send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
-                        resetInputStream();
-                        break;
-                    }
-                }
-            }
-         /*   send("Ola");
-            send("You entered " + roomEnum.getName());
-            send("DEBUG: " + name + " entered room " + roomEnum.getName());
-            send("DEBUG: Current room clients: " + room.getClients());
-
-
-          */
-
         }
 
-
+        /**
+         * Removes a random key from the client's key list.
+         *
+         * @param clientHandler the client handler whose key will be removed
+         */
         public void removeKey(ClientHandler clientHandler) {
             List<Key> playerKeys = clientHandler.getKeys();
 
@@ -482,7 +539,15 @@ public class Server {
             }
         }
 
+
+        /**
+         * Displays the room menu based on the room type.
+         *
+         * @param room the room type
+         */
+
         public void displayRoomMenu(RoomEnum room) throws QuestionLoadException {
+
             switch (room) {
                 case BATHROOM:
                     send(Menu.getBathroomDoorMenu());
@@ -520,7 +585,7 @@ public class Server {
             }
         }
 
-        private void leaveRoom() {
+        public void leaveRoom() {
             if (enteredRoom != null) {
                 Room room = getCastle().getRoom(enteredRoom);
                 room.leaveRoom(this);
@@ -576,10 +641,20 @@ public class Server {
             }).start();
         }
 
+        /**
+         * Sends a message to the client.
+         *
+         * @param message the message to send
+         */
         public void send(String message) {
             out.println(message);
         }
 
+        /**
+         * Reads the client's response.
+         *
+         * @return the client's response
+         */
         public String getAnswer() {
             String message = null;
             try {
@@ -591,6 +666,11 @@ public class Server {
             return message;
         }
 
+        /**
+         * Returns the client's name.
+         *
+         * @return the client's name
+         */
         public String getName() {
             return name;
         }
@@ -636,6 +716,9 @@ public class Server {
 
         }
 
+        /**
+         * Closes the client's socket connection.
+         */
         public void close() {
 
             try {

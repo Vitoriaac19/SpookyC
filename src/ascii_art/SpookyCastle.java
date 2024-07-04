@@ -1,8 +1,17 @@
 package ascii_art;
 
+/**
+ * The SpookyCastle class provides an ASCII art representation of a spooky castle.
+ * It displays a castle surrounded by atmospheric elements in ASCII characters.
+ */
 public final class SpookyCastle {
 
 
+    /**
+     * The ASCII art representation of a spooky castle.
+     * It depicts a castle surrounded by atmospheric elements such as clouds and stars,
+     * using ASCII characters for visual effect.
+     */
     public final static String SPOOKY_CASTLE = "\n" +
             " _____ _            ____                    _             ____          _   _      \n" +
             "|_   _| |__   ___  / ___| _ __   ___   ___ | | ___   _   / ___|__ _ ___| |_| | ___ \n" +

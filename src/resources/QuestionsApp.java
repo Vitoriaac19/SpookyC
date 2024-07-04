@@ -15,6 +15,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The QuestionsApp class is responsible for handling quiz questions from a JSON file,
+ * presenting them to a user, and validating user responses.
+ */
 public class QuestionsApp {
 
     private final Gson gson = new Gson();
@@ -22,12 +26,10 @@ public class QuestionsApp {
     private Audio music = new Audio();
 
     /**
-     * Method to get answers from the player, we will need a value between 1 and 4
-     * Try-catch to manage the invalid inputs the player can give
-     * Read input from client and trim whitespaces
-     * If the answer is not between 1 and 4, send an error message
-     * If the input is not a number, send an error message
-     * Return player's answer
+     * Prompts the user for an answer and validates the input.
+     *
+     * @param sender The client handler that interacts with the user.
+     * @return The user's answer as an integer between 1 and 4, inclusive.
      */
     private int getUserAnswer(Server.ClientHandler sender) throws InvalidAnswerException {
         int userAnswer = -1; //Default value
@@ -52,18 +54,12 @@ public class QuestionsApp {
         return userAnswer;
     }
 
-
     /**
-     * This method have the purpose of displaying the questions on each room
-     * Using the FileReader and BufferedReader it's possible to read the questions from a JSON file
-     * Use the Gson library to parse the JSON file
-     * Selection of a random question from the room the player enters
-     * Display the question animation, the question and options available
-     * Appears the numbers before the answer options and are the ones the player can choose
-     * Get user's answer
-     * Validate user's answer, adjusting the index to the index in the file
-     * Process the answer result and give to the player a key if the answer is correct or remove a random key if the answer is wrong
-     * If the player gives a wrong answer will be kicked to the main menu
+     * Conducts a quiz for the specified room. Loads questions from a JSON file,
+     * selects a random question, presents it to the user, and validates the response.
+     *
+     * @param roomEnum The room enumeration specifying the subject of the quiz.
+     * @param sender   The client handler that interacts with the user.
      */
     public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) throws QuestionLoadException {
         try (FileReader fileReader = new FileReader("src/resources/questions.json");
@@ -108,9 +104,10 @@ public class QuestionsApp {
                 try {
                     Thread.sleep(2000);
                     if (isCorrect) {
+                        sender.leaveRoom();
                         sender.displayRoomMenu(roomEnum);
-                        ;
                     } else {
+                        sender.leaveRoom();
                         sender.navigate();
                     }
                 } catch (InterruptedException | QuestionLoadException e) {

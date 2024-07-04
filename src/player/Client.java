@@ -9,6 +9,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * The Client class represents a client that connects to a server socket,
+ * sends messages to the server, and receives messages from the server.
+ */
 public class Client {
 
     private Socket client;
@@ -16,6 +20,11 @@ public class Client {
     private PrintWriter out;
     private boolean running = true;
 
+    /**
+     * The main method to run the Client application.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         Client client = new Client();
         try {
@@ -26,13 +35,19 @@ public class Client {
         }
     }
 
+
+    /**
+     * Starts the client, connects to the server, and handles incoming and outgoing messages.
+     */
+
     public void run() throws ClientConnectionException {
+
         try {
             client = new Socket("localhost", 9000);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            // Thread experience
+
             Input input = new Input();
             Thread thread = new Thread(input);
             thread.start();
@@ -47,8 +62,12 @@ public class Client {
         }
     }
 
-    // User left chat
+
+    /**
+     * Shuts down the client by closing the input and output streams and the socket.
+     */
     public void shutdown() throws ClientShutdownException {
+
         running = false;
         try {
             in.close();
@@ -61,8 +80,9 @@ public class Client {
         }
     }
 
-    // Input fix
-    // TODO put quit, nick .... more
+    /**
+     * The Input class handles user input from the console and sends messages to the server.
+     */
     class Input implements Runnable {
         @Override
         public void run() {
@@ -72,7 +92,7 @@ public class Client {
                     String message = inputReader.readLine();
                     if (message.equals("quit")) {
                         out.println("quit");
-                        // inputReader.close(); // Never close System.in
+
                         shutdown();
                     } else {
                         out.println(message);
