@@ -1,12 +1,14 @@
 package music;
 
+import exceptions.music.AudioPlaybackException;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.net.URL;
 
 public class Audio {
-    public void playAudio() {
+    public void playAudio() throws AudioPlaybackException {
         URL sound = Audio.class.getResource("creepy-sound.wav");
         try {
             Clip clip = AudioSystem.getClip();
@@ -14,7 +16,7 @@ public class Audio {
             clip.open(inputStream);
             clip.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new AudioPlaybackException("Error playing audio", e);
         }
     }
 }
