@@ -29,6 +29,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static colors.Colors.*;
 import static message.MessageStrings.*;
 
 /**
@@ -240,12 +241,12 @@ public class Server {
         public void addKey(Key key) {
             for (Key existingKey : keys) {
                 if (existingKey.equals(key)) {
-                    send(KEY_ALREADY_OWNED + key);
+                    send(KEY_ALREADY_OWNED + ANSI_RED + key + ANSI_RESET);
                     return;
                 }
             }
             keys.add(key);
-            send(RECEIVED_KEY + key);
+            send(RECEIVED_KEY + ANSI_GREEN + key + ANSI_RESET);
         }
 
         private void displayMenu2() throws QuestionLoadException {
@@ -529,7 +530,7 @@ public class Server {
                     .findFirst()
                     .orElse(null));
 
-            send(LOST_KEY + keyName);
+            send(LOST_KEY + ANSI_RED + keyName + ANSI_RESET);
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) throws QuestionLoadException {
