@@ -203,9 +203,9 @@ public class Menu {
     }
 
     /**
-     * Generates the welcome message prompt.
+     * Generates the welcome MessageStrings prompt.
      *
-     * @return the welcome message as a String
+     * @return the welcome MessageStrings as a String
      */
     public static String getWelcomeMessage() {
         return "Welcome to the Castle ...";

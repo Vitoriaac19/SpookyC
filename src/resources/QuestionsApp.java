@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import exceptions.quiz.InvalidAnswerException;
 import exceptions.quiz.QuestionLoadException;
 import exceptions.quiz.QuizProcessingException;
+import message.MessageStrings;
 import music.Audio;
 import rooms.RoomEnum;
 import server.Server;
@@ -36,17 +37,17 @@ public class QuestionsApp {
         boolean validInput = false;
         while (!validInput) {
             try {
-                sender.send("Write your answer: ");
+                sender.send(MessageStrings.PROMPT_USER_ANSWER);
                 String userInput = sender.getAnswer().trim();
                 userAnswer = Integer.parseInt(userInput);
 
                 if (userAnswer >= 1 && userAnswer <= 4) {
                     validInput = true;
                 } else {
-                    sender.send("Please enter a valid answer (1-4).");
+                    sender.send(MessageStrings.INVALID_NUMERIC_ANSWER);
                 }
             } catch (NumberFormatException e) {
-                sender.send("Please enter a valid numeric answer (1-4).");
+                sender.send(MessageStrings.INVALID_ANSWER_RANGE);
                 throw new InvalidAnswerException("Invalid numeric answer provided.");
 
             }
@@ -69,7 +70,7 @@ public class QuestionsApp {
             List<Question> questions = quiz.getSubjects().get(roomEnum.getName().toUpperCase());
 
             if (questions == null || questions.isEmpty()) {
-                sender.send("No questions available for the " + roomEnum.getName() + " room.");
+                sender.send(String.format(MessageStrings.NO_QUESTIONS_AVAILABLE, roomEnum.getName()));
                 return;
             }
 
@@ -91,12 +92,12 @@ public class QuestionsApp {
             if (isCorrect) {
                 URL correctSound = Audio.class.getResource("right-answer.wav");
                 music.playOnce(correctSound);
-                sender.send("Correct answer!");
+                sender.send(MessageStrings.CORRECT_ANSWER);
                 sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
             } else {
                 URL incorrectSound = Audio.class.getResource("wrong-answer.wav");
                 music.playOnce(incorrectSound);
-                sender.send("Your answer is incorrect! You'll lose a key and be kicked out from the room.");
+                sender.send(MessageStrings.INCORRECT_ANSWER);
                 sender.removeKey(sender);
             }
 

@@ -1,5 +1,6 @@
 package rooms;
 
+import message.MessageStrings;
 import server.Server;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public abstract class Room {
 
         if (clients.size() == 2) {
             for (Server.ClientHandler clientHandler1 : clients) {
-                clientHandler1.send("Both players are in same room");
+                clientHandler1.send(MessageStrings.BOTH_PLAYERS_IN_ROOM);
             }
         }
     }

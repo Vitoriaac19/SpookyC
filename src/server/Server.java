@@ -8,6 +8,7 @@ import exceptions.server.ClientHandlingException;
 import exceptions.server.ServerInterruptedException;
 import exceptions.server.ServerStartupException;
 import menus.Menu;
+import message.MessageStrings;
 import music.Audio;
 import resources.QuestionsApp;
 import rooms.Key;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static message.MessageStrings.*;
 
 /**
  * The Server class handles client connections, game initialization, and game interactions.
@@ -64,7 +67,7 @@ public class Server {
     }
 
     private static String invalidChoice() {
-        return "A cold shiver runs down your spine... You've wandered astray. Return to the entrance hall before the darkness takes hold...";
+        return MessageStrings.INVALID_CHOICE;
     }
 
 
@@ -89,15 +92,15 @@ public class Server {
                     }
 
                     if (clientHandlers.size() == MAX_CLIENTS) {
-                        System.out.println("Maximum number of players reached");
+                        System.out.println(MAX_PLAYERS_REACHED);
                         startGame();
                     }
                 } catch (IOException e) {
-                    throw new ClientHandlingException("Error handling client connection", e);
+                    throw new ClientHandlingException(CLIENT_CONNECTION_ERROR, e);
                 }
             }
         } catch (IOException e) {
-            throw new ServerStartupException("Failed to start the server on port 9000", e);
+            throw new ServerStartupException(SERVER_STARTUP_ERROR, e);
         }
     }
 
@@ -115,7 +118,7 @@ public class Server {
      * Starts the game for all connected clients.
      */
     public void startGame() {
-        System.out.println("Starting game");
+        System.out.println(STARTING_GAME);
         for (ClientHandler clientHandler : clientHandlers) {
             clientHandler.startGame();
         }
@@ -139,9 +142,9 @@ public class Server {
     public synchronized boolean acceptPlayer(ClientHandler clientHandler) {
         if (clientHandlers.size() < MAX_CLIENTS) {
             addClient(clientHandler);
-            System.out.println("Player connected . Total players: " + clientHandlers.size());
+            System.out.println(PLAYER_CONNECTED + clientHandlers.size());
 
-            clientHandler.send("Waiting for other players");
+            clientHandler.send(WAITING_FOR_PLAYERS);
 
             return true;
         } else {
@@ -151,10 +154,10 @@ public class Server {
     }
 
     /**
-     * Sends a message to a client indicating they were not accepted.
+     * Sends a MessageStrings to a client indicating they were not accepted.
      *
      * @param clientHandler the client handler to notify
-     * @param message       the message to send
+     * @param message       the MessageStrings to send
      */
     public void clientNotAccepted(ClientHandler clientHandler, String message) {
         clientHandler.send(message);
@@ -165,15 +168,21 @@ public class Server {
     }
 
     /**
-     * Broadcasts a message to all clients except the sender.
+     * Broadcasts a MessageStrings to all clients except the sender.
      *
      * @param name    the name of the sender
-     * @param message the message to broadcast
+     * @param message the MessageStrings to broadcast
      */
     public void broadcast(String name, String message) {
         clientHandlers.stream()
                 .filter(clientHandler -> !clientHandler.getName().equals(name))
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
+
+    }
+
+    public void endGame() {
+        clientHandlers.stream()
+                .forEach(ClientHandler::close);
     }
 
     /**
@@ -231,12 +240,12 @@ public class Server {
         public void addKey(Key key) {
             for (Key existingKey : keys) {
                 if (existingKey.equals(key)) {
-                    send("You already have a " + key);
+                    send(KEY_ALREADY_OWNED + key);
                     return;
                 }
             }
             keys.add(key);
-            send("You have received a " + key);
+            send(RECEIVED_KEY + key);
         }
 
         private void displayMenu2() throws QuestionLoadException {
@@ -265,7 +274,7 @@ public class Server {
                         send("Please, enter your name using only letters: ");
                         name = getAnswer();
                     }
-                    System.out.println(name + " has joined the game");
+                    System.out.println(name + PLAYER_JOINED_GAME);
                     send(Menu.getWelcomeMessage());
                     navigate();
                 } catch (QuestionLoadException e) {
@@ -381,37 +390,39 @@ public class Server {
             try {
                 handleHelp();
             } catch (IOException e) {
-                throw new RuntimeException(new ClientHandlingException("Error displaying help menu", e));
+                throw new RuntimeException(new ClientHandlingException(HELP_SENT, e));
             }
         }
 
         private void leaveCastle() {
             if (hasAllKeys()) {
+                URL winnerSound = Audio.class.getResource("winner-sound.wav");
+                music.stopAudio();
+                music.playOnce(winnerSound);
                 send(Winner.WINNER);
-                send("You have successfully left the castle. Congratulations , you won!");
+                send(ALL_KEYS_OWNED);
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
-                        close();
                     } catch (InterruptedException e) {
-                        // Thread interrupted while sleeping
-                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
+                        throw new RuntimeException(e);
                     }
+                    broadcast(name, PLAYER_WON_GAME);
+                    endGame();
                 }).start();
             } else {
-                send("You cannot leave the castle. You are missing some keys");
+                send(MISSING_KEYS);
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
-                        send(Menu.getMainMenu());
-                        handleMainMenu();
                     } catch (InterruptedException e) {
-                        // Thread interrupted while sleeping
-                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
-                    } catch (QuestionLoadException qle) {
-                        // Handle exception thrown by handleMainMenu()
-                        System.err.println("Error loading questions: " + qle.getMessage());
-                        // Optionally, handle or log the exception here
+                        throw new RuntimeException(e);
+                    }
+                    send(Menu.getMainMenu());
+                    try {
+                        handleMainMenu();
+                    } catch (QuestionLoadException e) {
+                        throw new RuntimeException(e);
                     }
                 }).start();
             }
@@ -461,17 +472,17 @@ public class Server {
                             break;
 
                         case "/q":
-                            send("You are ending your game. See you again soon. Bye!");
-                            broadcast(name, "left the game");
+                            send(MessageStrings.EXIT_GAME);
+                            broadcast(name, MessageStrings.PLAYER_LEFT_GAME);
                             clientSocket.close();
                             break;
 
                         default:
-                            invalidChoice();
+                            send(MessageStrings.INVALID_CHOICE);
                     }
                 }
                 if (message.isEmpty()) {
-                    send("Empty message!");
+                    send(MessageStrings.EMPTY_MESSAGE);
                 }
 
                 try {
@@ -482,7 +493,7 @@ public class Server {
                 resetInputStream();
 
             } catch (Exception e) {
-                throw new ClientHandlingException("Error handling help command", e);
+                throw new ClientHandlingException(HELP_COMMAND_ERROR, e);
             }
 
         }
@@ -503,7 +514,7 @@ public class Server {
 
             //Check if the player has a key to lose
             if (playerKeys.isEmpty()) {
-                send("You don't have any keys to lose.");
+                send(NO_KEYS_TO_LOSE);
                 return;
             }
 
@@ -518,14 +529,14 @@ public class Server {
                     .findFirst()
                     .orElse(null));
 
-            send("You have lost your " + keyName);
+            send(LOST_KEY + keyName);
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
-                    send("You entered the " + roomEnum.getName());
+                    send(ENTERED_ROOM + roomEnum.getName());
                     enteredRoom(roomEnum);
                     questionsApp.quiz(roomEnum, this);
                     break;
@@ -590,7 +601,7 @@ public class Server {
                 Room room = getCastle().getRoom(enteredRoom);
                 room.leaveRoom(this);
                 enteredRoom = null;
-                send("You left the room");
+                send(LEFT_ROOM);
             }
         }
 
@@ -642,9 +653,9 @@ public class Server {
         }
 
         /**
-         * Sends a message to the client.
+         * Sends a MessageStrings to the client.
          *
-         * @param message the message to send
+         * @param message the MessageStrings to send
          */
         public void send(String message) {
             out.println(message);
@@ -722,7 +733,7 @@ public class Server {
         public void close() {
 
             try {
-                send("shutting down your socket");
+                send(SHUTTING_DOWN_SOCKET);
                 clientSocket.close();
 
             } catch (IOException e) {
