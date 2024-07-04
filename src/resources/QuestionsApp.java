@@ -1,15 +1,14 @@
 package resources;
 
 import com.google.gson.Gson;
-import exceptions.quiz.InvalidAnswerException;
-import exceptions.quiz.QuestionLoadException;
-import exceptions.quiz.QuizProcessingException;
+import music.Audio;
 import rooms.RoomEnum;
 import server.Server;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
@@ -17,6 +16,7 @@ public class QuestionsApp {
 
     private final Gson gson = new Gson();
     private final Random random = new Random();
+    private Audio music = new Audio();
 
     /**
      * Method to get answers from the player, we will need a value between 1 and 4
@@ -26,7 +26,7 @@ public class QuestionsApp {
      * If the input is not a number, send an error message
      * Return player's answer
      */
-    private int getUserAnswer(Server.ClientHandler sender) throws InvalidAnswerException {
+    private int getUserAnswer(Server.ClientHandler sender) {
         int userAnswer = -1; //Default value
         boolean validInput = false;
         while (!validInput) {
@@ -42,8 +42,6 @@ public class QuestionsApp {
                 }
             } catch (NumberFormatException e) {
                 sender.send("Please enter a valid numeric answer (1-4).");
-                throw new InvalidAnswerException("Invalid numeric answer provided.");
-
             }
         }
         return userAnswer;
@@ -62,7 +60,7 @@ public class QuestionsApp {
      * Process the answer result and give to the player a key if the answer is correct or remove a random key if the answer is wrong
      * If the player gives a wrong answer will be kicked to the main menu
      */
-    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) throws QuestionLoadException {
+    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) {
         try (FileReader fileReader = new FileReader("src/resources/questions.json");
              BufferedReader reader = new BufferedReader(fileReader)) {
 
@@ -90,9 +88,13 @@ public class QuestionsApp {
             boolean isCorrect = (userAnswer - 1 == correctAnswerIndex);
 
             if (isCorrect) {
+                URL correctSound = Audio.class.getResource("right-answer.wav");
+                music.playOnce(correctSound);
                 sender.send("Correct answer!");
                 sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
             } else {
+                URL incorrectSound = Audio.class.getResource("wrong-answer.wav");
+                music.playOnce(incorrectSound);
                 sender.send("Your answer is incorrect! You'll lose a key and be kicked out from the room.");
                 sender.removeKey(sender);
             }
@@ -106,15 +108,13 @@ public class QuestionsApp {
                     } else {
                         sender.navigate();
                     }
-                } catch (InterruptedException | QuestionLoadException e) {
-                    throw new RuntimeException(new QuizProcessingException("Thread was interrupted during processing", e));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }).start();
 
         } catch (IOException e) {
-            throw new QuestionLoadException("Error loading questions from the JSON file", e);
-        } catch (InvalidAnswerException e) {
-            sender.send(e.getMessage());
+            e.printStackTrace();
         }
     }
 }
