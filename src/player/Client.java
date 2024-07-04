@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * The Client class represents a client that connects to a server socket,
+ * sends messages to the server, and receives messages from the server.
+ */
 public class Client {
 
     private Socket client;
@@ -13,12 +17,19 @@ public class Client {
     private PrintWriter out;
     private boolean running = true;
 
+    /**
+     * The main method to run the Client application.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         Client client = new Client();
         client.run();
     }
 
-
+    /**
+     * Starts the client, connects to the server, and handles incoming and outgoing messages.
+     */
     public void run() {
 
         try {
@@ -26,11 +37,9 @@ public class Client {
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            //Threat experience
             Input input = new Input();
             Thread thread = new Thread(input);
             thread.start();
-
 
             String text;
             while ((text = in.readLine()) != null) {
@@ -42,8 +51,9 @@ public class Client {
         }
     }
 
-    //User left chat
-
+    /**
+     * Shuts down the client by closing the input and output streams and the socket.
+     */
     public void shutdown() {
         running = false;
         try {
@@ -57,10 +67,9 @@ public class Client {
         }
     }
 
-
-    // Input fix
-    //TODO put quit , nick .... more
-
+    /**
+     * The Input class handles user input from the console and sends messages to the server.
+     */
     class Input implements Runnable {
         @Override
         public void run() {
@@ -70,7 +79,6 @@ public class Client {
                     String message = inputReader.readLine();
                     if (message.equals("quit")) {
                         out.println("quit");
-                        //   inputReader.close();     Nunca fechar System.In
                         shutdown();
                     } else {
                         out.println(message);
@@ -82,23 +90,3 @@ public class Client {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
