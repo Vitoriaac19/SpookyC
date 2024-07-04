@@ -1,12 +1,14 @@
 package resources;
 
 import com.google.gson.Gson;
+import music.Audio;
 import rooms.RoomEnum;
 import server.Server;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ public class QuestionsApp {
 
     private final Gson gson = new Gson();
     private final Random random = new Random();
+    private Audio music = new Audio();
 
     /**
      * Method to get answers from the player, we will need a value between 1 and 4
@@ -85,9 +88,13 @@ public class QuestionsApp {
             boolean isCorrect = (userAnswer - 1 == correctAnswerIndex);
 
             if (isCorrect) {
+                URL correctSound = Audio.class.getResource("right-answer.wav");
+                music.playOnce(correctSound);
                 sender.send("Correct answer!");
                 sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
             } else {
+                URL incorrectSound = Audio.class.getResource("wrong-answer.wav");
+                music.playOnce(incorrectSound);
                 sender.send("Your answer is incorrect! You'll lose a key and be kicked out from the room.");
                 sender.removeKey(sender);
             }

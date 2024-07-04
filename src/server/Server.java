@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +84,7 @@ public class Server {
     public void startGame() {
         System.out.println("Starting game");
         for (ClientHandler clientHandler : clientHandlers) {
-            clientHandler.startGame();
+            clientHandler.game();
         }
     }
 
@@ -120,6 +121,11 @@ public class Server {
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
     }
 
+    public void endGame() {
+        clientHandlers.stream()
+                .forEach(ClientHandler::close);
+    }
+
     //CLIENT HANDLER
     public class ClientHandler implements Runnable {
         private final BufferedReader in;
@@ -141,6 +147,7 @@ public class Server {
             this.isConnected = false;
             this.server = server;
             this.keys = new ArrayList<>();
+            this.music = new Audio();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -180,11 +187,15 @@ public class Server {
         }
 
 
-        public void startGame() {
+        public void game() {
             new Thread(() -> {
-                music = new Audio();
-                music.playAudio();
+
+                URL sound = Audio.class.getResource("creepy-sound.wav");
+                //music.keepAudioPlaying(sound);
+                music.playOnce(sound);
+
                 send(SpookyCastle.SPOOKY_CASTLE);
+
                 send("Enter your name: ");
                 name = getAnswer();
                 while (!name.matches("[a-zA-Z]+")) {
@@ -305,7 +316,12 @@ public class Server {
 
         private void leaveCastle() {
             if (hasAllKeys()) {
+
+                URL winnerSound = Audio.class.getResource("winner-sound.wav");
+                music.stopAudio();
+                music.keepAudioPlaying(winnerSound);
                 send(Winner.WINNER);
+
                 send("You have successfully left the castle. Congratulations , you won!");
                 new Thread(() -> {
                     try {
@@ -313,7 +329,8 @@ public class Server {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    close();
+                    broadcast(name, "won the game. This game is closing now. See you next time!");
+                    server.endGame();
                 }).start();
             } else {
                 send("You cannot leave the castle. You are missing some keys");

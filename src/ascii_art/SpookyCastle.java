@@ -2,6 +2,7 @@ package ascii_art;
 
 public final class SpookyCastle {
 
+
     public final static String SPOOKY_CASTLE = "\n" +
             " _____ _            ____                    _             ____          _   _      \n" +
             "|_   _| |__   ___  / ___| _ __   ___   ___ | | ___   _   / ___|__ _ ___| |_| | ___ \n" +
