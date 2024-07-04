@@ -84,7 +84,7 @@ public class Server {
     public void startGame() {
         System.out.println("Starting game");
         for (ClientHandler clientHandler : clientHandlers) {
-            clientHandler.startGame();
+            clientHandler.game();
         }
     }
 
@@ -119,6 +119,11 @@ public class Server {
         clientHandlers.stream()
                 .filter(clientHandler -> !clientHandler.getName().equals(name))
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
+    }
+
+    public void endGame() {
+        clientHandlers.stream()
+                .forEach(ClientHandler::close);
     }
 
     //CLIENT HANDLER
@@ -182,11 +187,13 @@ public class Server {
         }
 
 
-        public void startGame() {
+        public void game() {
             new Thread(() -> {
 
                 URL sound = Audio.class.getResource("creepy-sound.wav");
-                music.playAudio(sound);
+                //music.keepAudioPlaying(sound);
+                music.playOnce(sound);
+
                 send(SpookyCastle.SPOOKY_CASTLE);
 
                 send("Enter your name: ");
@@ -312,7 +319,7 @@ public class Server {
 
                 URL winnerSound = Audio.class.getResource("winner-sound.wav");
                 music.stopAudio();
-                music.playAudio(winnerSound);
+                music.keepAudioPlaying(winnerSound);
                 send(Winner.WINNER);
 
                 send("You have successfully left the castle. Congratulations , you won!");
@@ -322,7 +329,8 @@ public class Server {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    close();
+                    broadcast(name, "won the game. This game is closing now. See you next time!");
+                    server.endGame();
                 }).start();
             } else {
                 send("You cannot leave the castle. You are missing some keys");
