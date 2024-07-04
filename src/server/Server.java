@@ -3,6 +3,10 @@ package server;
 import ascii_art.SpookyCastle;
 import ascii_art.Winner;
 import castle.Castle;
+import exceptions.quiz.QuestionLoadException;
+import exceptions.server.ClientHandlingException;
+import exceptions.server.ServerInterruptedException;
+import exceptions.server.ServerStartupException;
 import menus.Menu;
 import music.Audio;
 import resources.QuestionsApp;
@@ -16,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +54,12 @@ public class Server {
      */
     public static void main(String[] args) {
         Server server = new Server();
-        server.start();
+        try {
+            server.start();
+        } catch (ServerStartupException e) {
+            System.err.println("Failed to start the server: " + e.getMessage());
+            e.printStackTrace();
+        }
 
     }
 
@@ -57,33 +67,37 @@ public class Server {
         return "A cold shiver runs down your spine... You've wandered astray. Return to the entrance hall before the darkness takes hold...";
     }
 
+
     /**
      * Starts the server and accepts client connections.
      */
-    public synchronized void start() {
+    public synchronized void start() throws ServerStartupException {
+
         try {
-            socket = new ServerSocket(9002);
+            socket = new ServerSocket(9000);
             ExecutorService pool = Executors.newFixedThreadPool(MAX_CLIENTS);
 
-
             while (running) {
-                Socket clientSocket = socket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                if (acceptPlayer(clientHandler)) {
-                    pool.submit(clientHandler);
-                } else {
-                    clientHandler.close();
-                }
 
-                if (clientHandlers.size() == MAX_CLIENTS) {
-                    System.out.println("Maximum number of players reached");
-                    startGame();
-                }
+                try {
+                    Socket clientSocket = socket.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    if (acceptPlayer(clientHandler)) {
+                        pool.submit(clientHandler);
+                    } else {
+                        clientHandler.close();
+                    }
 
+                    if (clientHandlers.size() == MAX_CLIENTS) {
+                        System.out.println("Maximum number of players reached");
+                        startGame();
+                    }
+                } catch (IOException e) {
+                    throw new ClientHandlingException("Error handling client connection", e);
+                }
             }
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ServerStartupException("Failed to start the server on port 9000", e);
         }
     }
 
@@ -187,13 +201,14 @@ public class Server {
             this.name = "";
             this.isConnected = false;
             this.keys = new ArrayList<>();
+            music = new Audio();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new ClientHandlingException("Failed to initialize client handler", e);
             }
 
 
@@ -224,12 +239,12 @@ public class Server {
             send("You have received a " + key);
         }
 
-        private void displayMenu2() {
+        private void displayMenu2() throws QuestionLoadException {
             send(Menu.getMenu2());
             handleMenu2();
         }
 
-        private void displayMenu3() {
+        private void displayMenu3() throws QuestionLoadException {
             send(Menu.getMenu3());
             handleMenu3();
         }
@@ -239,21 +254,26 @@ public class Server {
          */
         public void startGame() {
             new Thread(() -> {
-                music = new Audio();
-                music.playAudio();
-                send(SpookyCastle.SPOOKY_CASTLE);
-                send("Enter your name: ");
-                name = getAnswer();
-                while (!name.matches("[a-zA-Z]+")) {
-                    send("Please, enter your name using only letters: ");
+                try {
+                    URL sound = Audio.class.getResource("creepy-sound.wav");
+                    music.keepAudioPlaying(sound);
+                    //music.playOnce(sound);
+                    send(SpookyCastle.SPOOKY_CASTLE);
+                    send("Enter your name: ");
                     name = getAnswer();
+                    while (!name.matches("[a-zA-Z]+")) {
+                        send("Please, enter your name using only letters: ");
+                        name = getAnswer();
+                    }
+                    System.out.println(name + " has joined the game");
+                    send(Menu.getWelcomeMessage());
+                    navigate();
+                } catch (QuestionLoadException e) {
+                    send("Error playing background music: " + e.getMessage());
+                    // Consider how to handle this error scenario, e.g., closing resources or retrying
                 }
-                System.out.println(name + " has joined the game");
-                send(Menu.getWelcomeMessage());
-                navigate();
             }).start();
         }
-
 
         @Override
         public void run() {
@@ -262,16 +282,18 @@ public class Server {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Client handler thread interrupted", e));
                 }
             }
 
         }
 
+
         /**
          * Navigates the client through the main menu.
          */
-        public void navigate() {
+        public void navigate() throws QuestionLoadException {
+
             send(Menu.getMainMenu());
             handleMainMenu();
         }
@@ -285,7 +307,7 @@ public class Server {
             return true;
         }
 
-        private void handleExitMenu() {
+        private void handleExitMenu() throws QuestionLoadException {
             send(Menu.getExitMenu());
             String choice = getAnswer();
             switch (choice) {
@@ -297,7 +319,7 @@ public class Server {
 
 
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException(new ServerInterruptedException("Exit menu thread interrupted", e));
                         }
                     }).start();
 
@@ -307,8 +329,8 @@ public class Server {
                         try {
                             Thread.sleep(1000);
                             navigate();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException | QuestionLoadException e) {
+                            throw new RuntimeException(new ServerInterruptedException("Exit menu navigation thread interrupted", e));
                         }
                         send(Menu.getMainMenu());
                     }).start();
@@ -322,7 +344,7 @@ public class Server {
             }
         }
 
-        private void handleMainMenu() {
+        private void handleMainMenu() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -359,7 +381,7 @@ public class Server {
             try {
                 handleHelp();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(new ClientHandlingException("Error displaying help menu", e));
             }
         }
 
@@ -370,25 +392,31 @@ public class Server {
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
+                        close();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        // Thread interrupted while sleeping
+                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
                     }
-                    close();
                 }).start();
             } else {
                 send("You cannot leave the castle. You are missing some keys");
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
+                        send(Menu.getMainMenu());
+                        handleMainMenu();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        // Thread interrupted while sleeping
+                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
+                    } catch (QuestionLoadException qle) {
+                        // Handle exception thrown by handleMainMenu()
+                        System.err.println("Error loading questions: " + qle.getMessage());
+                        // Optionally, handle or log the exception here
                     }
-                    send(Menu.getMainMenu());
-                    handleMainMenu();
                 }).start();
-
             }
         }
+
 
         /**
          * Handles client commands from the help menu.
@@ -449,12 +477,12 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Help handler thread interrupted", e));
                 }
                 resetInputStream();
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ClientHandlingException("Error handling help command", e);
             }
 
         }
@@ -493,7 +521,7 @@ public class Server {
             send("You have lost your " + keyName);
         }
 
-        private void handleRoomMenu(RoomEnum roomEnum) {
+        private void handleRoomMenu(RoomEnum roomEnum) throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -511,12 +539,15 @@ public class Server {
             }
         }
 
+
         /**
          * Displays the room menu based on the room type.
          *
          * @param room the room type
          */
-        public void displayRoomMenu(RoomEnum room) {
+
+        public void displayRoomMenu(RoomEnum room) throws QuestionLoadException {
+
             switch (room) {
                 case BATHROOM:
                     send(Menu.getBathroomDoorMenu());
@@ -563,7 +594,7 @@ public class Server {
             }
         }
 
-        void handleMenu2() {
+        void handleMenu2() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -603,7 +634,7 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Invalid menu choice handler thread interrupted", e));
                 }
                 send(Menu.getMainMenu());
 
@@ -644,7 +675,7 @@ public class Server {
             return name;
         }
 
-        public void handleMenu3() {
+        public void handleMenu3() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":

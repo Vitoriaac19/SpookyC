@@ -1,5 +1,8 @@
 package player;
 
+import exceptions.client.ClientConnectionException;
+import exceptions.client.ClientShutdownException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,18 +27,26 @@ public class Client {
      */
     public static void main(String[] args) {
         Client client = new Client();
-        client.run();
+        try {
+            client.run();
+        } catch (ClientConnectionException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     /**
      * Starts the client, connects to the server, and handles incoming and outgoing messages.
      */
-    public void run() {
+
+    public void run() throws ClientConnectionException {
 
         try {
-            client = new Socket("localhost", 9002);
+            client = new Socket("localhost", 9000);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
 
             Input input = new Input();
             Thread thread = new Thread(input);
@@ -47,14 +58,16 @@ public class Client {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ClientConnectionException("Error while connecting to the server", e);
         }
     }
+
 
     /**
      * Shuts down the client by closing the input and output streams and the socket.
      */
-    public void shutdown() {
+    public void shutdown() throws ClientShutdownException {
+
         running = false;
         try {
             in.close();
@@ -63,7 +76,7 @@ public class Client {
                 client.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ClientShutdownException("Error during shutdown", e);
         }
     }
 
@@ -79,12 +92,15 @@ public class Client {
                     String message = inputReader.readLine();
                     if (message.equals("quit")) {
                         out.println("quit");
+
                         shutdown();
                     } else {
                         out.println(message);
                     }
                 }
             } catch (IOException e) {
+                throw new RuntimeException(new ClientConnectionException("Error while reading input", e));
+            } catch (ClientShutdownException e) {
                 throw new RuntimeException(e);
             }
         }

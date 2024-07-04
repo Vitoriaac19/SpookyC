@@ -6,6 +6,7 @@ package ascii_art;
  */
 public final class SpookyCastle {
 
+
     /**
      * The ASCII art representation of a spooky castle.
      * It depicts a castle surrounded by atmospheric elements such as clouds and stars,
