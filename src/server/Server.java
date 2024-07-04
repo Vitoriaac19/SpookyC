@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -141,6 +142,7 @@ public class Server {
             this.isConnected = false;
             this.server = server;
             this.keys = new ArrayList<>();
+            this.music = new Audio();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -182,9 +184,11 @@ public class Server {
 
         public void startGame() {
             new Thread(() -> {
-                music = new Audio();
-                music.playAudio();
+
+                URL sound = Audio.class.getResource("creepy-sound.wav");
+                music.playAudio(sound);
                 send(SpookyCastle.SPOOKY_CASTLE);
+
                 send("Enter your name: ");
                 name = getAnswer();
                 while (!name.matches("[a-zA-Z]+")) {
@@ -305,7 +309,12 @@ public class Server {
 
         private void leaveCastle() {
             if (hasAllKeys()) {
+
+                URL winnerSound = Audio.class.getResource("winner-sound.wav");
+                music.stopAudio();
+                music.playAudio(winnerSound);
                 send(Winner.WINNER);
+
                 send("You have successfully left the castle. Congratulations , you won!");
                 new Thread(() -> {
                     try {
