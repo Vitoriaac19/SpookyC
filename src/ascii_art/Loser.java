@@ -1,7 +1,15 @@
 package ascii_art;
 
+/**
+ * The {@code Loser} class represents ASCII art depicting the word "LOSER".
+ * It is designed to be used for visual representation in console applications.
+ */
 public final class Loser {
 
+    /**
+     * ASCII art depicting the word "LOSER". This string includes special characters
+     * representing the word in a stylized font.
+     */
     public final static String LOOSER = "\n" +
             "⢰⣶⣶⣶⣶⣾⡷⠀⠀⠀⠀ ⠀⣠⣾⣾⣿⣿⣿⣿⣷⣶⣤⡀⠀⠀⠀⢀⣿⣶⣿⣿⣿⣿⣿⣿⣶⣤⡀⠀⠀⢰⣿⣶⣾⣶⣶⣶⣶⣾⣿⡷⠀⢠⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣤⡀⠀⠀\n" +
             "⢸⣿⣿⣿⣿⣿⡇⠀⠀ ⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠐⠺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀\n" +

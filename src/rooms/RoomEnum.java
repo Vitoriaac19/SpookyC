@@ -4,11 +4,29 @@ package rooms;
  * The RoomEnum enum represents various rooms, each associated with a specific key and room type.
  */
 public enum RoomEnum {
+    /**
+     * The kitchen room, associated with a Spoon key.
+     */
     KITCHEN(new Key("Spoon"), RoomType.KITCHEN),
+    /**
+     * The bedroom room, associated with a Pillow key.
+     */
     BEDROOM(new Key("Pillow"), RoomType.BEDROOM),
+    /**
+     * The bathroom room, associated with a Toothbrush key.
+     */
     BATHROOM(new Key("Toothbrush"), RoomType.BATHROOM),
+    /**
+     * The living room, associated with a Remote key.
+     */
     LIVINGROOM(new Key("Remote"), RoomType.LIVINGROOM),
+    /**
+     * The gym room, associated with a Dumbbell key.
+     */
     GYM(new Key("Dumbbell"), RoomType.GYM),
+    /**
+     * The office room, associated with a Pen key.
+     */
     OFFICE(new Key("Pen"), RoomType.OFFICE);
 
     public Key key;
@@ -17,7 +35,7 @@ public enum RoomEnum {
     /**
      * Constructs a RoomEnum instance with the specified key and room type.
      *
-     * @param key      The key associated with the room.
+     * @param name     The key name associated with the room.
      * @param roomType The type of the room.
      */
     RoomEnum(Key name, RoomType roomType) {

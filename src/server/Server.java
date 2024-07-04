@@ -74,6 +74,8 @@ public class Server {
 
     /**
      * Starts the server and accepts client connections.
+     *
+     * @throws ServerStartupException if the server fails to start
      */
     public synchronized void start() throws ServerStartupException {
 
@@ -181,6 +183,9 @@ public class Server {
 
     }
 
+    /**
+     * Ends the game for all clients.
+     */
     public void endGame() {
         clientHandlers.stream()
                 .forEach(ClientHandler::close);
@@ -395,6 +400,9 @@ public class Server {
             }
         }
 
+        /**
+         * Handles the client's exit from the castle.
+         */
         private void leaveCastle() {
             if (hasAllKeys()) {
                 URL winnerSound = Audio.class.getResource("winner-sound.wav");
@@ -499,6 +507,11 @@ public class Server {
 
         }
 
+        /**
+         * Initiates entry to a specific room.
+         *
+         * @param roomEnum the room to enter
+         */
         private void enteredRoom(RoomEnum roomEnum) {
             Room room = getCastle().getRoom(roomEnum);
             room.enterRoom(this);
@@ -533,6 +546,11 @@ public class Server {
             send(LOST_KEY + ANSI_RED + keyName + ANSI_RESET);
         }
 
+        /**
+         * Handles the menu for a specific room.
+         *
+         * @param roomEnum the room to handle
+         */
         private void handleRoomMenu(RoomEnum roomEnum) throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
