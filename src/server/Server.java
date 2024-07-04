@@ -3,7 +3,6 @@ package server;
 import ascii_art.SpookyCastle;
 import ascii_art.Winner;
 import castle.Castle;
-import exceptions.music.AudioPlaybackException;
 import exceptions.quiz.QuestionLoadException;
 import exceptions.server.ClientHandlingException;
 import exceptions.server.ServerInterruptedException;
@@ -21,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -150,6 +150,7 @@ public class Server {
             this.name = "";
             this.isConnected = false;
             this.keys = new ArrayList<>();
+            music = new Audio();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -192,8 +193,9 @@ public class Server {
         public void startGame() {
             new Thread(() -> {
                 try {
-                    music = new Audio();
-                    music.playAudio(); // This method might throw AudioPlaybackException
+                    URL sound = Audio.class.getResource("creepy-sound.wav");
+                    music.keepAudioPlaying(sound);
+                    //music.playOnce(sound);
                     send(SpookyCastle.SPOOKY_CASTLE);
                     send("Enter your name: ");
                     name = getAnswer();
@@ -204,7 +206,7 @@ public class Server {
                     System.out.println(name + " has joined the game");
                     send(Menu.getWelcomeMessage());
                     navigate();
-                } catch (QuestionLoadException | AudioPlaybackException e) {
+                } catch (QuestionLoadException e) {
                     send("Error playing background music: " + e.getMessage());
                     // Consider how to handle this error scenario, e.g., closing resources or retrying
                 }

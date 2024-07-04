@@ -1,6 +1,9 @@
 package resources;
 
 import com.google.gson.Gson;
+import exceptions.quiz.InvalidAnswerException;
+import exceptions.quiz.QuestionLoadException;
+import exceptions.quiz.QuizProcessingException;
 import music.Audio;
 import rooms.RoomEnum;
 import server.Server;
@@ -26,7 +29,7 @@ public class QuestionsApp {
      * If the input is not a number, send an error message
      * Return player's answer
      */
-    private int getUserAnswer(Server.ClientHandler sender) {
+    private int getUserAnswer(Server.ClientHandler sender) throws InvalidAnswerException {
         int userAnswer = -1; //Default value
         boolean validInput = false;
         while (!validInput) {
@@ -42,6 +45,8 @@ public class QuestionsApp {
                 }
             } catch (NumberFormatException e) {
                 sender.send("Please enter a valid numeric answer (1-4).");
+                throw new InvalidAnswerException("Invalid numeric answer provided.");
+
             }
         }
         return userAnswer;
@@ -60,7 +65,7 @@ public class QuestionsApp {
      * Process the answer result and give to the player a key if the answer is correct or remove a random key if the answer is wrong
      * If the player gives a wrong answer will be kicked to the main menu
      */
-    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) {
+    public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) throws QuestionLoadException {
         try (FileReader fileReader = new FileReader("src/resources/questions.json");
              BufferedReader reader = new BufferedReader(fileReader)) {
 
@@ -108,13 +113,15 @@ public class QuestionsApp {
                     } else {
                         sender.navigate();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException | QuestionLoadException e) {
+                    throw new RuntimeException(new QuizProcessingException("Thread was interrupted during processing", e));
                 }
             }).start();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new QuestionLoadException("Error loading questions from the JSON file", e);
+        } catch (InvalidAnswerException e) {
+            sender.send(e.getMessage());
         }
     }
 }
