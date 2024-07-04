@@ -3,6 +3,11 @@ package server;
 import ascii_art.SpookyCastle;
 import ascii_art.Winner;
 import castle.Castle;
+import exceptions.music.AudioPlaybackException;
+import exceptions.quiz.QuestionLoadException;
+import exceptions.server.ClientHandlingException;
+import exceptions.server.ServerInterruptedException;
+import exceptions.server.ServerStartupException;
 import menus.Menu;
 import music.Audio;
 import resources.QuestionsApp;
@@ -16,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +43,12 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-        server.start();
+        try {
+            server.start();
+        } catch (ServerStartupException e) {
+            System.err.println("Failed to start the server: " + e.getMessage());
+            e.printStackTrace();
+        }
 
     }
 
@@ -48,30 +57,31 @@ public class Server {
     }
 
 
-    public synchronized void start() {
+    public synchronized void start() throws ServerStartupException {
         try {
-            socket = new ServerSocket(9002);
+            socket = new ServerSocket(9000);
             ExecutorService pool = Executors.newFixedThreadPool(MAX_CLIENTS);
 
-
             while (running) {
-                Socket clientSocket = socket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-                if (acceptPlayer(clientHandler)) {
-                    pool.submit(clientHandler);
-                } else {
-                    clientHandler.close();
-                }
+                try {
+                    Socket clientSocket = socket.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    if (acceptPlayer(clientHandler)) {
+                        pool.submit(clientHandler);
+                    } else {
+                        clientHandler.close();
+                    }
 
-                if (clientHandlers.size() == MAX_CLIENTS) {
-                    System.out.println("Maximum number of players reached");
-                    startGame();
+                    if (clientHandlers.size() == MAX_CLIENTS) {
+                        System.out.println("Maximum number of players reached");
+                        startGame();
+                    }
+                } catch (IOException e) {
+                    throw new ClientHandlingException("Error handling client connection", e);
                 }
-
             }
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ServerStartupException("Failed to start the server on port 9000", e);
         }
     }
 
@@ -84,7 +94,7 @@ public class Server {
     public void startGame() {
         System.out.println("Starting game");
         for (ClientHandler clientHandler : clientHandlers) {
-            clientHandler.game();
+            clientHandler.startGame();
         }
     }
 
@@ -121,18 +131,12 @@ public class Server {
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
     }
 
-    public void endGame() {
-        clientHandlers.stream()
-                .forEach(ClientHandler::close);
-    }
-
     //CLIENT HANDLER
     public class ClientHandler implements Runnable {
         private final BufferedReader in;
         private final PrintWriter out;
         private final Socket clientSocket;
         private final List<Key> keys;
-        private final Server server;
         private final QuestionsApp questionsApp = new QuestionsApp();
         boolean isConnected;
         private String name;
@@ -140,21 +144,19 @@ public class Server {
         private Audio music;
 
         //TODO String mais compacta do que String message
-        public ClientHandler(Socket clientSocket, Server server) {
+        public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
 
             this.name = "";
             this.isConnected = false;
-            this.server = server;
             this.keys = new ArrayList<>();
-            this.music = new Audio();
 
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new ClientHandlingException("Failed to initialize client handler", e);
             }
 
 
@@ -176,38 +178,38 @@ public class Server {
             send("You have received a " + key);
         }
 
-        private void displayMenu2() {
+        private void displayMenu2() throws QuestionLoadException {
             send(Menu.getMenu2());
             handleMenu2();
         }
 
-        private void displayMenu3() {
+        private void displayMenu3() throws QuestionLoadException {
             send(Menu.getMenu3());
             handleMenu3();
         }
 
 
-        public void game() {
+        public void startGame() {
             new Thread(() -> {
-
-                URL sound = Audio.class.getResource("creepy-sound.wav");
-                //music.keepAudioPlaying(sound);
-                music.playOnce(sound);
-
-                send(SpookyCastle.SPOOKY_CASTLE);
-
-                send("Enter your name: ");
-                name = getAnswer();
-                while (!name.matches("[a-zA-Z]+")) {
-                    send("Please, enter your name using only letters: ");
+                try {
+                    music = new Audio();
+                    music.playAudio(); // This method might throw AudioPlaybackException
+                    send(SpookyCastle.SPOOKY_CASTLE);
+                    send("Enter your name: ");
                     name = getAnswer();
+                    while (!name.matches("[a-zA-Z]+")) {
+                        send("Please, enter your name using only letters: ");
+                        name = getAnswer();
+                    }
+                    System.out.println(name + " has joined the game");
+                    send(Menu.getWelcomeMessage());
+                    navigate();
+                } catch (QuestionLoadException | AudioPlaybackException e) {
+                    send("Error playing background music: " + e.getMessage());
+                    // Consider how to handle this error scenario, e.g., closing resources or retrying
                 }
-                System.out.println(name + " has joined the game");
-                send(Menu.getWelcomeMessage());
-                navigate();
             }).start();
         }
-
 
         @Override
         public void run() {
@@ -216,13 +218,13 @@ public class Server {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Client handler thread interrupted", e));
                 }
             }
 
         }
 
-        public void navigate() {
+        public void navigate() throws QuestionLoadException {
             send(Menu.getMainMenu());
             handleMainMenu();
         }
@@ -236,7 +238,7 @@ public class Server {
             return true;
         }
 
-        private void handleExitMenu() {
+        private void handleExitMenu() throws QuestionLoadException {
             send(Menu.getExitMenu());
             String choice = getAnswer();
             switch (choice) {
@@ -248,7 +250,7 @@ public class Server {
 
 
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException(new ServerInterruptedException("Exit menu thread interrupted", e));
                         }
                     }).start();
 
@@ -258,8 +260,8 @@ public class Server {
                         try {
                             Thread.sleep(1000);
                             navigate();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException | QuestionLoadException e) {
+                            throw new RuntimeException(new ServerInterruptedException("Exit menu navigation thread interrupted", e));
                         }
                         send(Menu.getMainMenu());
                     }).start();
@@ -273,7 +275,7 @@ public class Server {
             }
         }
 
-        private void handleMainMenu() {
+        private void handleMainMenu() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -310,42 +312,42 @@ public class Server {
             try {
                 handleHelp();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(new ClientHandlingException("Error displaying help menu", e));
             }
         }
 
         private void leaveCastle() {
             if (hasAllKeys()) {
-
-                URL winnerSound = Audio.class.getResource("winner-sound.wav");
-                music.stopAudio();
-                music.keepAudioPlaying(winnerSound);
                 send(Winner.WINNER);
-
                 send("You have successfully left the castle. Congratulations , you won!");
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
+                        close();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        // Thread interrupted while sleeping
+                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
                     }
-                    broadcast(name, "won the game. This game is closing now. See you next time!");
-                    server.endGame();
                 }).start();
             } else {
                 send("You cannot leave the castle. You are missing some keys");
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
+                        send(Menu.getMainMenu());
+                        handleMainMenu();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        // Thread interrupted while sleeping
+                        throw new RuntimeException(new ServerInterruptedException("Leave castle thread interrupted", e));
+                    } catch (QuestionLoadException qle) {
+                        // Handle exception thrown by handleMainMenu()
+                        System.err.println("Error loading questions: " + qle.getMessage());
+                        // Optionally, handle or log the exception here
                     }
-                    send(Menu.getMainMenu());
-                    handleMainMenu();
                 }).start();
-
             }
         }
+
 
         public void handleHelp() throws IOException {
             int maxString = 70;
@@ -401,18 +403,18 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Help handler thread interrupted", e));
                 }
                 resetInputStream();
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ClientHandlingException("Error handling help command", e);
             }
 
         }
 
         private void enteredRoom(RoomEnum roomEnum) {
-            Room room = server.getCastle().getRoom(roomEnum);
+            Room room = getCastle().getRoom(roomEnum);
             room.enterRoom(this);
             enteredRoom = roomEnum;
             List<ClientHandler> clientsInRoom = room.getClients();
@@ -460,7 +462,7 @@ public class Server {
             send("You have lost your " + keyName);
         }
 
-        private void handleRoomMenu(RoomEnum roomEnum) {
+        private void handleRoomMenu(RoomEnum roomEnum) throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -478,7 +480,7 @@ public class Server {
             }
         }
 
-        public void displayRoomMenu(RoomEnum room) {
+        public void displayRoomMenu(RoomEnum room) throws QuestionLoadException {
             switch (room) {
                 case BATHROOM:
                     send(Menu.getBathroomDoorMenu());
@@ -518,14 +520,14 @@ public class Server {
 
         private void leaveRoom() {
             if (enteredRoom != null) {
-                Room room = server.getCastle().getRoom(enteredRoom);
+                Room room = getCastle().getRoom(enteredRoom);
                 room.leaveRoom(this);
                 enteredRoom = null;
                 send("You left the room");
             }
         }
 
-        void handleMenu2() {
+        void handleMenu2() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
@@ -565,7 +567,7 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new ServerInterruptedException("Invalid menu choice handler thread interrupted", e));
                 }
                 send(Menu.getMainMenu());
 
@@ -591,7 +593,7 @@ public class Server {
             return name;
         }
 
-        public void handleMenu3() {
+        public void handleMenu3() throws QuestionLoadException {
             String choice = getAnswer();
             switch (choice) {
                 case "1":
