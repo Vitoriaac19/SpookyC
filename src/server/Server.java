@@ -36,6 +36,7 @@ import static message.MessageStrings.*;
  * The Server class handles client connections, game initialization, and game interactions.
  */
 public class Server {
+    private static final int PORT = 9000;
     private final int MAX_CLIENTS = 2;
     private final List<ClientHandler> clientHandlers;
     private final boolean running;
@@ -51,21 +52,6 @@ public class Server {
         running = true;
     }
 
-    /**
-     * The main method to start the server.
-     *
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-        Server server = new Server();
-        try {
-            server.start();
-        } catch (ServerStartupException e) {
-            System.err.println("Failed to start the server: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-    }
 
     private static String invalidChoice() {
         return MessageStrings.INVALID_CHOICE;
@@ -80,7 +66,7 @@ public class Server {
     public synchronized void start() throws ServerStartupException {
 
         try {
-            socket = new ServerSocket(9000);
+            socket = new ServerSocket(PORT);
             ExecutorService pool = Executors.newFixedThreadPool(MAX_CLIENTS);
 
             while (running) {
@@ -122,9 +108,17 @@ public class Server {
      */
     public void startGame() {
         System.out.println(STARTING_GAME);
-        for (ClientHandler clientHandler : clientHandlers) {
-            clientHandler.startGame();
-        }
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                for (ClientHandler clientHandler : clientHandlers) {
+                    clientHandler.startGame();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(new ServerInterruptedException(START_GAME_THREAD_INTERRUPTED, e));
+            }
+        }).start();
+
     }
 
     /**
@@ -151,7 +145,7 @@ public class Server {
 
             return true;
         } else {
-            clientNotAccepted(clientHandler, "We don't have space yet. Please try again later.");
+            clientNotAccepted(clientHandler, NO_MORE_SPACE);
             return false;
         }
     }
@@ -223,7 +217,7 @@ public class Server {
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             } catch (IOException e) {
-                throw new ClientHandlingException("Failed to initialize client handler", e);
+                throw new ClientHandlingException(FAILED_TO_INITIALIZE_CLIENT_HANDLER, e);
             }
 
 
@@ -274,17 +268,17 @@ public class Server {
                     music.keepAudioPlaying(sound);
                     //music.playOnce(sound);
                     send(SpookyCastle.SPOOKY_CASTLE);
-                    send("Enter your name: ");
+                    send(ENTER_YOUR_NAME);
                     name = getAnswer();
                     while (!name.matches("[a-zA-Z]+")) {
-                        send("Please, enter your name using only letters: ");
+                        send(ONLY_LETTERS);
                         name = getAnswer();
                     }
                     System.out.println(name + PLAYER_JOINED_GAME);
                     send(Menu.getWelcomeMessage());
                     navigate();
                 } catch (QuestionLoadException e) {
-                    send("Error playing background music: " + e.getMessage());
+                    send(ERROR_PLAYING_BACKGROUND_MUSIC + e.getMessage());
                     // Consider how to handle this error scenario, e.g., closing resources or retrying
                 }
             }).start();
@@ -297,7 +291,7 @@ public class Server {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(new ServerInterruptedException("Client handler thread interrupted", e));
+                    throw new RuntimeException(new ServerInterruptedException(CLIENT_HANDLER_THREAD_INTERRUPTED, e));
                 }
             }
 
@@ -334,7 +328,7 @@ public class Server {
 
 
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(new ServerInterruptedException("Exit menu thread interrupted", e));
+                            throw new RuntimeException(new ServerInterruptedException(EXIT_MENU_THREAD_INTERRUPTED, e));
                         }
                     }).start();
 
@@ -345,7 +339,7 @@ public class Server {
                             Thread.sleep(1000);
                             navigate();
                         } catch (InterruptedException | QuestionLoadException e) {
-                            throw new RuntimeException(new ServerInterruptedException("Exit menu navigation thread interrupted", e));
+                            throw new RuntimeException(new ServerInterruptedException(EXIT_MENU_NAVIGATION_THREAD_INTERRUPTED, e));
                         }
                         send(Menu.getMainMenu());
                     }).start();
@@ -497,7 +491,7 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(new ServerInterruptedException("Help handler thread interrupted", e));
+                    throw new RuntimeException(new ServerInterruptedException(HELP_HANDLER_THREAD_INTERRUPTED, e));
                 }
                 resetInputStream();
 
@@ -664,7 +658,7 @@ public class Server {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(new ServerInterruptedException("Invalid menu choice handler thread interrupted", e));
+                    throw new RuntimeException(new ServerInterruptedException(INVALID_MENU_CHOICE_HANDLER_THREAD_INTERRUPTED, e));
                 }
                 send(Menu.getMainMenu());
 
@@ -690,7 +684,7 @@ public class Server {
             try {
                 message = in.readLine();
             } catch (IOException | NullPointerException e) {
-                System.out.println("Erro a ler"); // Alterar
+                System.out.println(ERROR_READING_ANSWER);
             }
 
             return message;
@@ -734,15 +728,25 @@ public class Server {
 
         private void displayKeys() {
             if (keys.isEmpty()) {
-                send("You don't have any keys.");
+                send(YOU_DONT_HAVE_ANY_KEYS);
 
             } else {
-                StringBuilder message = new StringBuilder("Your keys : ");
+                StringBuilder message = new StringBuilder(YOUR_KEYS + "\n");
                 for (Key key : keys) {
                     message.append(key).append("\n");
                 }
                 send(message.toString());
             }
+            new Thread(() -> {
+                try {
+                    send(BACK_TO_MAIN_MENU);
+                    Thread.sleep(2000);
+                    send(Menu.getMainMenu());
+                    handleMainMenu();
+                } catch (InterruptedException | QuestionLoadException e) {
+                    throw new RuntimeException(new ServerInterruptedException(EXIT_MENU_NAVIGATION_THREAD_INTERRUPTED, e));
+                }
+            }).start();
 
         }
 

@@ -15,6 +15,7 @@ import java.net.Socket;
  */
 public class Client {
 
+    private static final int PORT = 9000;
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
@@ -43,7 +44,7 @@ public class Client {
     public void run() throws ClientConnectionException {
 
         try {
-            client = new Socket("localhost", 9000);
+            client = new Socket("localhost", PORT);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
