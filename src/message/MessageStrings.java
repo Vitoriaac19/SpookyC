@@ -1,5 +1,8 @@
 package message;
 
+/**
+ * The MessageStrings class holds static string constants used throughout the application.
+ */
 public class MessageStrings {
     public static final String PROMPT_USER_ANSWER = "Write your answer: ";
     public static final String INVALID_NUMERIC_ANSWER = "Please enter a valid numeric answer (1-4).";

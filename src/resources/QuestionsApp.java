@@ -31,6 +31,7 @@ public class QuestionsApp {
      *
      * @param sender The client handler that interacts with the user.
      * @return The user's answer as an integer between 1 and 4, inclusive.
+     * @throws InvalidAnswerException If the user's answer is invalid.
      */
     private int getUserAnswer(Server.ClientHandler sender) throws InvalidAnswerException {
         int userAnswer = -1; //Default value
@@ -61,6 +62,7 @@ public class QuestionsApp {
      *
      * @param roomEnum The room enumeration specifying the subject of the quiz.
      * @param sender   The client handler that interacts with the user.
+     * @throws QuestionLoadException If there is an error loading questions from the JSON file.
      */
     public void quiz(RoomEnum roomEnum, Server.ClientHandler sender) throws QuestionLoadException {
         try (FileReader fileReader = new FileReader("src/resources/questions.json");

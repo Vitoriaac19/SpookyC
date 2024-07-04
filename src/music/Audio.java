@@ -5,9 +5,18 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.net.URL;
 
+/**
+ * The Audio class is responsible for handling audio playback.
+ * It supports playing audio in a loop and playing audio once.
+ */
 public class Audio {
     private Clip clip;
 
+    /**
+     * Plays an audio clip in a continuous loop.
+     *
+     * @param sound The URL of the audio clip to play.
+     */
     public void keepAudioPlaying(URL sound) {
         try {
             if (clip != null && clip.isRunning()) {
@@ -27,6 +36,11 @@ public class Audio {
         }
     }
 
+    /**
+     * Plays an audio clip once.
+     *
+     * @param sound The URL of the audio clip to play.
+     */
     public void playOnce(URL sound) {
         try {
             Clip clip2 = AudioSystem.getClip();
@@ -37,8 +51,10 @@ public class Audio {
             e.printStackTrace();
         }
     }
-    
 
+    /**
+     * Stops any currently playing audio.
+     */
     public void stopAudio() {
         if (clip != null && clip.isRunning()) {
             clip.stop();
