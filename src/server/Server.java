@@ -4,6 +4,7 @@ import ascii_art.BigWinner;
 import ascii_art.SpookyCastle;
 import castle.Castle;
 import menus.Menu;
+import music.Audio;
 import resources.QuestionsApp;
 import rooms.Key;
 import rooms.Room;
@@ -130,6 +131,7 @@ public class Server {
         boolean isConnected;
         private String name;
         private RoomEnum enteredRoom;
+        private Audio music;
 
         //TODO String mais compacta do que String message
         public ClientHandler(Socket clientSocket, Server server) {
@@ -180,6 +182,8 @@ public class Server {
 
         public void startGame() {
             new Thread(() -> {
+                music = new Audio();
+                music.playAudio();
                 send(SpookyCastle.SPOOKY_CASTLE);
                 send("Enter your name: ");
                 name = getAnswer();
