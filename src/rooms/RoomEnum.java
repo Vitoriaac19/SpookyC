@@ -1,12 +1,12 @@
 package rooms;
 
 public enum RoomEnum {
-    KITCHEN(new Key("SPOON"), RoomType.KITCHEN),
-    BEDROOM(new Key("PILLOW"), RoomType.BEDROOM),
-    BATHROOM(new Key("TOOTHBRUSH"), RoomType.BATHROOM),
-    LIVINGROOM(new Key("REMOTE"), RoomType.LIVINGROOM),
-    GYM(new Key("DUMBBELL"), RoomType.GYM),
-    OFFICE(new Key("PEN"), RoomType.OFFICE);
+    KITCHEN(new Key("Spoon"), RoomType.KITCHEN),
+    BEDROOM(new Key("Pillow"), RoomType.BEDROOM),
+    BATHROOM(new Key("Toothbrush"), RoomType.BATHROOM),
+    LIVINGROOM(new Key("Remote"), RoomType.LIVINGROOM),
+    GYM(new Key("Dumbbell"), RoomType.GYM),
+    OFFICE(new Key("Pen"), RoomType.OFFICE);
 
 
     public Key key;

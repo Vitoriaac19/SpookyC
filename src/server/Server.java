@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -23,10 +24,10 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private final int MAX_CLIENTS = 2;
-    private List<ClientHandler> clientHandlers;
+    private final List<ClientHandler> clientHandlers;
+    private final boolean running;
+    private final Castle castle;
     private ServerSocket socket;
-    private boolean running;
-    private Castle castle;
 
     public Server() {
         clientHandlers = new ArrayList<>(MAX_CLIENTS);
@@ -120,23 +121,22 @@ public class Server {
 
     //CLIENT HANDLER
     public class ClientHandler implements Runnable {
-        boolean isconnected;
-        private BufferedReader in;
-        private PrintWriter out;
-        private Socket clientSocket;
+        private final BufferedReader in;
+        private final PrintWriter out;
+        private final Socket clientSocket;
+        private final List<Key> keys;
+        private final Server server;
+        private final QuestionsApp questionsApp = new QuestionsApp();
+        boolean isConnected;
         private String name;
-        private List<Key> keys;
         private RoomEnum enteredRoom;
-        private Server server;
-        private String message;
-        private QuestionsApp questionsApp = new QuestionsApp();
 
         //TODO String mais compacta do que String message
         public ClientHandler(Socket clientSocket, Server server) {
             this.clientSocket = clientSocket;
 
             this.name = "";
-            this.isconnected = false;
+            this.isConnected = false;
             this.server = server;
             this.keys = new ArrayList<>();
 
@@ -157,7 +157,14 @@ public class Server {
         }
 
         public void addKey(Key key) {
+            for (Key existingKey : keys) {
+                if (existingKey.equals(key)) {
+                    send("You already have a " + key);
+                    return;
+                }
+            }
             keys.add(key);
+            send("You have received a " + key);
         }
 
         private void displayMenu2() {
@@ -190,7 +197,7 @@ public class Server {
         @Override
         public void run() {
 
-            while (!isconnected) {
+            while (!isConnected) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -322,7 +329,7 @@ public class Server {
         public void handleHelp() throws IOException {
             int maxString = 70;
             try {
-                message = in.readLine();
+                String message = in.readLine();
 
                 if (isCommand(message)) {
                     String description = message.substring(0, 2);
@@ -366,7 +373,7 @@ public class Server {
                             invalidChoice();
                     }
                 }
-                if (message.equals("")) {
+                if (message.isEmpty()) {
                     send("Empty message!");
                 }
 
@@ -394,7 +401,6 @@ public class Server {
                         send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
                         client.send("Another player has entered in the room . Prepare for a game of Rock-Paper-Scissors");
                         resetInputStream();
-                        startRockPaperScissors(client);
                         break;
                     }
                 }
@@ -409,74 +415,28 @@ public class Server {
 
         }
 
-        private void startRockPaperScissors(ClientHandler opponent) {
-            try {
-                resetInputStream();
-                // opponent.resetInputStream();
 
-                send(Menu.getRockPaperScissorsMenu());
-                opponent.send(Menu.getRockPaperScissorsMenu());
+        public void removeKey(ClientHandler clientHandler) {
+            List<Key> playerKeys = clientHandler.getKeys();
 
-                String playerChoice = getAnswer();
-                send("You have chosen " + choiceToString(playerChoice));
-
-                opponent.send("Other player has already made a choice");
-                String opponentChoice = opponent.getAnswer();
-                opponent.send("You have chosen " + choiceToString(opponentChoice));
-
-                int result = determineWinner(playerChoice, opponentChoice);
-
-                if (result == 1) {
-                    send("You won! You receive a key from this room as a reward.");
-                    opponent.send("You lost! Your opponent receives a key from this room as a reward.");
-                    //addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
-                    stealKey(opponent);
-                    opponent.leaveRoom();
-                } else if (result == -1) {
-                    send("You lost! Your opponent receives a key from this room as a reward.");
-                    opponent.send("You won! You receive a key from this room as a reward.");
-                    //opponent.addKey(RoomEnum.valueOf(enteredRoom.name()).getKey());
-                    leaveRoom();
-                } else {
-                    send("It's a draw!");
-                    opponent.send("It's a draw!");
-                }
-
-                Thread.sleep(3000);
-
-                if (result == 1) {
-                    displayRoomMenu(enteredRoom);
-                } else if (result == -1) {
-                    send(Menu.getMainMenu());
-                    resetInputStream();
-                    handleMainMenu();
-                } else {
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        startRockPaperScissors(opponent);
-                    }).start();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void stealKey(ClientHandler clientHandler) {
-            Random random = new Random();
-            List<Key> opponentKeys = clientHandler.getKeys();
-            if (opponentKeys.size() == 0) {
-                send("You don't have any keys to steal.");
+            //Check if the player has a key to lose
+            if (playerKeys.isEmpty()) {
+                send("You don't have any keys to lose.");
                 return;
             }
-            int randIndex = random.nextInt(opponentKeys.size());
-            Key stolenKey = opponentKeys.remove(randIndex);
 
-            send("You have stolen a key from " + clientHandler.getName() + ": " + stolenKey);
-            clientHandler.send("Your key has been stolen: " + stolenKey);
+            //Remove a key from the player
+            Random random = new Random();
+            int randomIndex = random.nextInt(playerKeys.size());
+            Key lostKey = playerKeys.remove(randomIndex);
+
+            String keyName = String.valueOf(Arrays.stream(RoomEnum.values())
+                    .map(RoomEnum::getKey)
+                    .filter(key -> key == lostKey)
+                    .findFirst()
+                    .orElse(null));
+
+            send("You have lost your " + keyName);
         }
 
         private void handleRoomMenu(RoomEnum roomEnum) {
@@ -532,36 +492,6 @@ public class Server {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-        }
-
-        private int determineWinner(String playerChoice, String opponentChoice) {
-
-            int playerChoiceInt = Integer.parseInt(playerChoice);
-            int opponentChoiceInt = Integer.parseInt(opponentChoice);
-
-            //Rock vai ser 1 , paper vai ser 2 e Scissors vai ser 3
-            if (playerChoiceInt == opponentChoiceInt) {
-
-                return 0;  //empate
-            }
-
-            if (playerChoiceInt == 1 && opponentChoiceInt == 3 || playerChoiceInt == 2 && opponentChoiceInt == 1 || playerChoiceInt == 3 && opponentChoiceInt == 2) {
-                return 1; //venceu
-            }
-            return -1; //perdeu
-        }
-
-        private String choiceToString(String choice) {
-            switch (choice) {
-                case "1":
-                    return "Rock";
-                case "2":
-                    return "Paper";
-                case "3":
-                    return "Scissors";
-                default:
-                    return "Invalid choice";
             }
         }
 
@@ -669,23 +599,14 @@ public class Server {
 
         private void displayKeys() {
             if (keys.isEmpty()) {
-                send("You don't have any keys , you going back to the main menu");
+                send("You don't have any keys.");
 
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    send(Menu.getMainMenu());
-
-                }).start();
             } else {
-                String message = "Your keys : ";
+                StringBuilder message = new StringBuilder("Your keys : ");
                 for (Key key : keys) {
-                    message = message + key + "\n";
+                    message.append(key).append("\n");
                 }
-                send(message);
+                send(message.toString());
             }
 
         }
