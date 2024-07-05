@@ -264,9 +264,9 @@ public class Server {
         public void startGame() {
             new Thread(() -> {
                 try {
-                    URL sound = Audio.class.getResource("creepy-sound.wav");
-                    music.keepAudioPlaying(sound);
-                    //music.playOnce(sound);
+                    // Send a command to the client to play the sound
+                    send("PLAY_SOUND creepy-sound.wav");
+
                     send(SpookyCastle.SPOOKY_CASTLE);
                     send(ENTER_YOUR_NAME);
                     name = getAnswer();

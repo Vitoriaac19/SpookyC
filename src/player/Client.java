@@ -2,12 +2,16 @@ package player;
 
 import exceptions.client.ClientConnectionException;
 import exceptions.client.ClientShutdownException;
+import music.Audio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.URL;
+
+import static message.MessageStrings.*;
 
 /**
  * The Client class represents a client that connects to a server socket,
@@ -20,55 +24,59 @@ public class Client {
     private BufferedReader in;
     private PrintWriter out;
     private boolean running = true;
+    private Audio audio;
 
     /**
-     * The main method to run the Client application.
-     *
-     * @param args Command line arguments (not used).
+     * Creates a new Client instance and starts the connection.
      */
-    public static void main(String[] args) {
-        Client client = new Client();
-        try {
-            client.run();
-        } catch (ClientConnectionException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Starts the client, connects to the server, and handles incoming and outgoing messages.
-     */
-
-    public void run() throws ClientConnectionException {
-
+    public Client() throws ClientConnectionException {
         try {
             client = new Socket("localhost", PORT);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
+            audio = new Audio();
 
             Input input = new Input();
             Thread thread = new Thread(input);
             thread.start();
 
-            String text;
-            while ((text = in.readLine()) != null) {
-                System.out.println(text);
-            }
+            listenForMessages();
 
         } catch (IOException e) {
-            throw new ClientConnectionException("Error while connecting to the server", e);
+            throw new ClientConnectionException(ERROR_CONNECTING_TO_SERVER, e);
         }
     }
 
+    /**
+     * Listens for messages from the server and handles them appropriately.
+     */
+    private void listenForMessages() {
+        String text;
+        try {
+            while ((text = in.readLine()) != null) {
+                System.out.println(text);
+                if (text.startsWith("PLAY_SOUND")) {
+                    String[] parts = text.split(" ");
+                    if (parts.length > 1) {
+                        String soundFile = parts[1];
+                        URL sound = Audio.class.getResource(soundFile);
+                        if (sound != null) {
+                            audio.keepAudioPlaying(sound);
+                        } else {
+                            System.err.println(SOUND_FILE_NOT_FOUND + soundFile);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Shuts down the client by closing the input and output streams and the socket.
      */
     public void shutdown() throws ClientShutdownException {
-
         running = false;
         try {
             in.close();
@@ -77,7 +85,7 @@ public class Client {
                 client.close();
             }
         } catch (IOException e) {
-            throw new ClientShutdownException("Error during shutdown", e);
+            throw new ClientShutdownException(ERROR_SHUTTING_DOWN_CLIENT, e);
         }
     }
 
@@ -93,14 +101,13 @@ public class Client {
                     String message = inputReader.readLine();
                     if (message.equals("quit")) {
                         out.println("quit");
-
                         shutdown();
                     } else {
                         out.println(message);
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException(new ClientConnectionException("Error while reading input", e));
+                throw new RuntimeException(new ClientConnectionException(ERROR_READING_INPUT, e));
             } catch (ClientShutdownException e) {
                 throw new RuntimeException(e);
             }

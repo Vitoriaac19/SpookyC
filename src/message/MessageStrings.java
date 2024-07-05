@@ -49,5 +49,9 @@ public class MessageStrings {
     public static final String YOUR_KEYS = "Your keys : ";
     public static final String BACK_TO_MAIN_MENU = "You going back to main menu";
     public static final String START_GAME_THREAD_INTERRUPTED = "Start game thread interrupted";
+    public static final String ERROR_CONNECTING_TO_SERVER = "Error connecting to server";
+    public static final String SOUND_FILE_NOT_FOUND = "Sound file not found: ";
+    public static final String ERROR_SHUTTING_DOWN_CLIENT = "Error shutting down client";
+    public static final String ERROR_READING_INPUT = "Error reading input";
 
 }
