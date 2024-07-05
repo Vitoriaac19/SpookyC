@@ -1,20 +1,34 @@
 package menus;
 
+/**
+ * The Menu class provides static methods and constants to generate various
+ * menu prompts for the game.
+ */
 public class Menu {
 
-
+    /**
+     * Help menu listing the available commands.
+     */
     public static final String HELP = """ 
-        +--------------------------------------------------+
-        +------------List of available commands:-----------+
-        +--------------------------------------------------+
-        | [/p + <message>] Speak only to your opponent     |
-        | [/s + <message>] Shout at your opponent          |
-        | [/q + <space>] Exits the server                  |
-        +--------------------------------------------------+
-        > """;
+            +--------------------------------------------------+
+            +------------List of available commands:-----------+
+            +--------------------------------------------------+
+            | [/p + <message>] Speak only to your opponent     |
+            | [/s + <message>] Shout at your opponent          |
+            | [/q + <space>] Exits the server                  |
+            +--------------------------------------------------+
+            > """;
 
+    /**
+     * Message for an invalid command.
+     */
     public static final String COMMAND_NOT_FOUND = "Invalid command!";
 
+    /**
+     * Generates the main menu prompt.
+     *
+     * @return the main menu as a formatted String
+     */
     public static String getMainMenu() {
         return "+--------------------------------------------------+\n" +
                 "+ ------------Entrance Hall------------------------+\n" +
@@ -34,6 +48,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the exit menu prompt.
+     *
+     * @return the exit menu as a formatted String
+     */
     public static String getExitMenu() {
         return "+--------------------------------------------------+\n" +
                 "+------------ Exit the Castle ---------------------+\n" +
@@ -46,6 +65,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the second menu prompt.
+     *
+     * @return the second menu as a formatted String
+     */
     public static String getMenu2() {
         return "+--------------------------------------------------+\n" +
                 "+----------Middle of the Hall----------------------+\n" +
@@ -62,6 +86,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the third menu prompt.
+     *
+     * @return the third menu as a formatted String
+     */
     public static String getMenu3() {
         return "+--------------------------------------------------+\n" +
                 "+---------------End of the Hall--------------------+\n" +
@@ -77,6 +106,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the kitchen door menu prompt.
+     *
+     * @return the kitchen door menu as a formatted String
+     */
     public static String getKitchenDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| A chilling breeze greets you at the kitchen door.|\n" +
@@ -88,6 +122,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the gym door menu prompt.
+     *
+     * @return the gym door menu as a formatted String
+     */
     public static String getGymDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| The gym echoes with phantom footsteps.           |\n" +
@@ -99,6 +138,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the office door menu prompt.
+     *
+     * @return the office door menu as a formatted String
+     */
     public static String getOfficeDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| The office whispers of secrets long forgotten.   |\n" +
@@ -110,6 +154,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the bathroom door menu prompt.
+     *
+     * @return the bathroom door menu as a formatted String
+     */
     public static String getBathroomDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| The bathroom's silence is deafening.             |\n" +
@@ -121,6 +170,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the bedroom door menu prompt.
+     *
+     * @return the bedroom door menu as a formatted String
+     */
     public static String getBedroomDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| The bedroom's darkness beckons.                  |\n" +
@@ -132,6 +186,11 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the living room door menu prompt.
+     *
+     * @return the living room door menu as a formatted String
+     */
     public static String getLivingRoomDoorMenu() {
         return "+--------------------------------------------------+\n" +
                 "| The living room is filled with eerie silence.    |\n" +
@@ -143,43 +202,14 @@ public class Menu {
                 "> ";
     }
 
+    /**
+     * Generates the welcome message prompt.
+     *
+     * @return the welcome message as a String
+     */
+
     public static String getWelcomeMessage() {
         return "Welcome to the Castle ...";
     }
 
-
-    public static String getRockPaperScissorsMenu() {
-        return "+-------------------------------+\n" +
-                "| Choose your move:             |\n" +
-                "| [1] Rock                      |\n" +
-                "| [2] Paper                     |\n" +
-                "| [3] Scissors                  |\n" +
-                "+-------------------------------+\n" +
-                "> ";
-    }
-
-    public static String getCastleArt() {
-        return "The spooky castle.                 |>>>                                 \n" +
-                "----------------                  |                               \n" +
-                "                    |>>>      _  _|_  _         |>>>              \n" +
-                "                    |        |;| |;| |;|        |\n" +
-                "                _  _|_  _    \\\\.    .  /    _  _|_  _\n" +
-                "               |;|_|;|_|;|    \\\\:. ,  /    |;|_|;|_|;|\n" +
-                "               \\\\..      /    ||;   . |    \\\\.    .  /\n" +
-                "                \\\\.  ,  /     ||:  .  |     \\\\:  .  /\n" +
-                "                 ||:   |_   _ ||_ . _ | _   _||:   |\n" +
-                "                 ||:  .|||_|;|_|;|_|;|_|;|_|;||:.  |\n" +
-                "                 ||:   ||.    .     .      . ||:  .|\n" +
-                "                 ||: . || .     . .   .  ,   ||:   |       \\,/\n" +
-                "                 ||:   ||:  ,  _______   .   ||: , |            /`\\\n" +
-                "                 ||:   || .   /+++++++\\    . ||:   |\n" +
-                "                 ||:   ||.    |+++++++| .    ||: . |\n" +
-                "              __ ||: . ||: ,  |+++++++|.  . _||_   |\n" +
-                "     ____--`~    '--~~__|.    |+++++__|----~    ~`---,              ___\n" +
-                "-~--~                   ~---__|,--~'                  ~~----_____-~'   `~----~~\n" +
-                "\n";
-    }
-
 }
-
-
