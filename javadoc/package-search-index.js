@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ascii_art"},{"l":"castle"},{"l":"colors"},{"l":"exceptions.client"},{"l":"exceptions.music"},{"l":"exceptions.quiz"},{"l":"exceptions.server"},{"l":"menus"},{"l":"message"},{"l":"music"},{"l":"player"},{"l":"resources"},{"l":"rooms"},{"l":"server"}];updateSearchResults();
