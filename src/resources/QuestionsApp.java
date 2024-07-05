@@ -5,18 +5,17 @@ import exceptions.quiz.InvalidAnswerException;
 import exceptions.quiz.QuestionLoadException;
 import exceptions.quiz.QuizProcessingException;
 import message.MessageStrings;
-import music.Audio;
 import rooms.RoomEnum;
 import server.Server;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
-import static message.MessageStrings.*;
+import static message.MessageStrings.ERROR_LOADING_QUESTIONS_FROM_JSON_FILE;
+import static message.MessageStrings.QUIZ_PROCESSING_THREAD_INTERRUPTED;
 
 /**
  * The QuestionsApp class is responsible for handling quiz questions from a JSON file,
@@ -26,7 +25,6 @@ public class QuestionsApp {
 
     private final Gson gson = new Gson();
     private final Random random = new Random();
-    private Audio music = new Audio();
 
     /**
      * Prompts the user for an answer and validates the input.
@@ -36,7 +34,7 @@ public class QuestionsApp {
      * @throws InvalidAnswerException If the user's answer is invalid.
      */
     private int getUserAnswer(Server.ClientHandler sender) throws InvalidAnswerException {
-        int userAnswer = -1; //Default value
+        int userAnswer = -1;
         boolean validInput = false;
         while (!validInput) {
             try {
@@ -45,7 +43,7 @@ public class QuestionsApp {
 
                 if (userInput.isEmpty()) {
                     sender.send(MessageStrings.INVALID_NUMERIC_ANSWER);
-                    continue; // Prompt again for input
+                    continue;
                 }
 
                 userAnswer = Integer.parseInt(userInput);
@@ -88,6 +86,7 @@ public class QuestionsApp {
             sender.send(ascii_art.Question.QUESTION);
             sender.send(randomQuestion.getQuestion());
             List<String> answers = randomQuestion.getAnswers();
+
             for (int i = 0; i < answers.size(); i++) {
                 sender.send((i + 1) + ". " + answers.get(i));
             }
@@ -98,13 +97,9 @@ public class QuestionsApp {
             boolean isCorrect = (userAnswer - 1 == correctAnswerIndex);
 
             if (isCorrect) {
-                URL correctSound = Audio.class.getResource(RIGHT_ANSWER_SOUND);
-                music.playOnce(correctSound);
                 sender.send(MessageStrings.CORRECT_ANSWER);
                 sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
             } else {
-                URL incorrectSound = Audio.class.getResource(WRONG_ANSWER_SOUND);
-                music.playOnce(incorrectSound);
                 sender.send(MessageStrings.INCORRECT_ANSWER);
                 sender.removeKey(sender);
             }

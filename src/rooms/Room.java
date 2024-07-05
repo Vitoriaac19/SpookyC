@@ -13,7 +13,6 @@ public abstract class Room {
     private boolean isOccupied;
     private List<Server.ClientHandler> clients;
     private Key key;
-    private boolean occupied;
 
     /**
      * Constructor to initialize the Room with a specified key.

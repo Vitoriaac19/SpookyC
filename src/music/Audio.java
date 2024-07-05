@@ -19,11 +19,6 @@ public class Audio {
      */
     public void keepAudioPlaying(URL sound) {
         try {
-            if (clip != null && clip.isRunning()) {
-                clip.stop();
-                clip.close();
-            }
-
             clip = AudioSystem.getClip();
             AudioInputStream inputStream = AudioSystem.getAudioInputStream(sound);
 
@@ -52,13 +47,5 @@ public class Audio {
         }
     }
 
-    /**
-     * Stops any currently playing audio.
-     */
-    public void stopAudio() {
-        if (clip != null && clip.isRunning()) {
-            clip.stop();
-            clip.close();
-        }
-    }
+    
 }

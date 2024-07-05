@@ -101,7 +101,6 @@ public class Server {
      */
     public synchronized void addClient(ClientHandler clientHandler) {
         clientHandlers.add(clientHandler);
-        System.out.println(getClientHandlers().size());
     }
 
     /**
@@ -272,7 +271,6 @@ public class Server {
         public void startGame() {
             new Thread(() -> {
                 try {
-                    // Send a command to the client to play the sound
                     send("PLAY_SOUND creepy-sound.wav");
 
                     send(SpookyCastle.SPOOKY_CASTLE);
@@ -287,7 +285,6 @@ public class Server {
                     navigate();
                 } catch (QuestionLoadException e) {
                     send(ERROR_PLAYING_BACKGROUND_MUSIC + e.getMessage());
-                    // Consider how to handle this error scenario, e.g., closing resources or retrying
                 }
             }).start();
         }
@@ -408,7 +405,6 @@ public class Server {
         private void leaveCastle() {
             if (hasAllKeys()) {
                 URL winnerSound = Audio.class.getResource(WINNER_SOUND);
-                music.stopAudio();
                 music.playOnce(winnerSound);
                 send(Winner.WINNER);
                 send(ALL_KEYS_OWNED);
@@ -504,7 +500,8 @@ public class Server {
                     throw new RuntimeException(new ServerInterruptedException(HELP_HANDLER_THREAD_INTERRUPTED, e));
                 }
                 resetInputStream();
-
+                send(Menu.getMainMenu());
+                handleMainMenu();
             } catch (Exception e) {
                 throw new ClientHandlingException(HELP_COMMAND_ERROR, e);
             }
@@ -530,13 +527,11 @@ public class Server {
         public void removeKey(ClientHandler clientHandler) {
             List<Key> playerKeys = clientHandler.getKeys();
 
-            //Check if the player has a key to lose
             if (playerKeys.isEmpty()) {
                 send(NO_KEYS_TO_LOSE);
                 return;
             }
 
-            //Remove a key from the player
             Random random = new Random();
             int randomIndex = random.nextInt(playerKeys.size());
             Key lostKey = playerKeys.remove(randomIndex);

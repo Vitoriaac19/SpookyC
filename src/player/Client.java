@@ -33,7 +33,7 @@ public class Client {
      */
     public Client() throws ClientConnectionException {
         try {
-            client = new Socket("10.10.226.184", PORT);
+            client = new Socket("localhost", PORT);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             audio = new Audio();
