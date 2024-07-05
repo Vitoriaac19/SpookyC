@@ -61,5 +61,5 @@ public class MessageStrings {
     public static final String WRONG_ANSWER_SOUND = "wrong-answer.wav";
     public static final String RIGHT_ANSWER_SOUND = "right-answer.wav";
     public static final String CHOOSE_AN_OPTION = "Choose an option to continue";
-
+    public static final String INVALID_ANSWER_FORMAT = "Invalid answer format. Please enter a valid numeric answer (1-4).";
 }

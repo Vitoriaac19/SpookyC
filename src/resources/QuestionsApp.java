@@ -42,6 +42,12 @@ public class QuestionsApp {
             try {
                 sender.send(MessageStrings.PROMPT_USER_ANSWER);
                 String userInput = sender.getAnswer().trim();
+
+                if (userInput.isEmpty()) {
+                    sender.send(MessageStrings.INVALID_NUMERIC_ANSWER);
+                    continue; // Prompt again for input
+                }
+
                 userAnswer = Integer.parseInt(userInput);
 
                 if (userAnswer >= 1 && userAnswer <= 4) {
@@ -50,9 +56,7 @@ public class QuestionsApp {
                     sender.send(MessageStrings.INVALID_NUMERIC_ANSWER);
                 }
             } catch (NumberFormatException e) {
-                sender.send(MessageStrings.INVALID_ANSWER_RANGE);
-                throw new InvalidAnswerException("Invalid numeric answer provided.");
-
+                sender.send(MessageStrings.INVALID_ANSWER_FORMAT);
             }
         }
         return userAnswer;
