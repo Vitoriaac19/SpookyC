@@ -33,7 +33,7 @@ public class MessageStrings {
     public static final String MISSING_KEYS = "You cannot leave the castle. You are missing some keys";
     public static final String HELP_COMMAND_ERROR = "Error handling help command";
     public static final String HELP_SENT = "Help menu sent";
-    public static final String SHUTTING_DOWN_SOCKET = "Shutting down your socket";
+    public static final String SHUTTING_DOWN_SOCKET = "Goodbye!";
     public static final String NO_MORE_SPACE = "We don't have space yet. Please try again later.";
     public static final String FAILED_TO_INITIALIZE_CLIENT_HANDLER = "Failed to initialize client handler";
     public static final String ENTER_YOUR_NAME = "Enter your name: ";
@@ -53,5 +53,13 @@ public class MessageStrings {
     public static final String SOUND_FILE_NOT_FOUND = "Sound file not found: ";
     public static final String ERROR_SHUTTING_DOWN_CLIENT = "Error shutting down client";
     public static final String ERROR_READING_INPUT = "Error reading input";
+    public static final String PLAY_SOUND = "PLAY_SOUND";
+    public static final String QUIT = "quit";
+    public static final String WINNER_SOUND = "winner-sound.wav";
+    public static final String QUIZ_PROCESSING_THREAD_INTERRUPTED = "Quiz processing thread interrupted";
+    public static final String ERROR_LOADING_QUESTIONS_FROM_JSON_FILE = "Error loading questions from the JSON file";
+    public static final String WRONG_ANSWER_SOUND = "wrong-answer.wav";
+    public static final String RIGHT_ANSWER_SOUND = "right-answer.wav";
+    public static final String CHOOSE_AN_OPTION = "Choose an option to continue";
 
 }

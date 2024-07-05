@@ -55,7 +55,7 @@ public class Client {
         try {
             while ((text = in.readLine()) != null) {
                 System.out.println(text);
-                if (text.startsWith("PLAY_SOUND")) {
+                if (text.startsWith(PLAY_SOUND)) {
                     String[] parts = text.split(" ");
                     if (parts.length > 1) {
                         String soundFile = parts[1];
@@ -99,8 +99,8 @@ public class Client {
                 BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
                 while (running) {
                     String message = inputReader.readLine();
-                    if (message.equals("quit")) {
-                        out.println("quit");
+                    if (message.equals(QUIT)) {
+                        out.println(QUIT);
                         shutdown();
                     } else {
                         out.println(message);

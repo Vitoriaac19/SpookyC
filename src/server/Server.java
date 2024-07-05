@@ -1,5 +1,6 @@
 package server;
 
+import ascii_art.Loser;
 import ascii_art.SpookyCastle;
 import ascii_art.Winner;
 import castle.Castle;
@@ -174,6 +175,13 @@ public class Server {
         clientHandlers.stream()
                 .filter(clientHandler -> !clientHandler.getName().equals(name))
                 .forEach(clientHandler -> clientHandler.send(name + ": " + message));
+
+    }
+
+    public void broadcastLoser(String name, String message) {
+        clientHandlers.stream()
+                .filter(clientHandler -> !clientHandler.getName().equals(name))
+                .forEach(clientHandler -> clientHandler.send(message));
 
     }
 
@@ -399,7 +407,7 @@ public class Server {
          */
         private void leaveCastle() {
             if (hasAllKeys()) {
-                URL winnerSound = Audio.class.getResource("winner-sound.wav");
+                URL winnerSound = Audio.class.getResource(WINNER_SOUND);
                 music.stopAudio();
                 music.playOnce(winnerSound);
                 send(Winner.WINNER);
@@ -411,6 +419,8 @@ public class Server {
                         throw new RuntimeException(e);
                     }
                     broadcast(name, PLAYER_WON_GAME);
+                    broadcastLoser(name, Loser.LOOSER);
+
                     endGame();
                 }).start();
             } else {
@@ -739,11 +749,9 @@ public class Server {
             }
             new Thread(() -> {
                 try {
-                    send(BACK_TO_MAIN_MENU);
+                    send(CHOOSE_AN_OPTION);
                     Thread.sleep(2000);
-                    send(Menu.getMainMenu());
-                    handleMainMenu();
-                } catch (InterruptedException | QuestionLoadException e) {
+                } catch (InterruptedException e) {
                     throw new RuntimeException(new ServerInterruptedException(EXIT_MENU_NAVIGATION_THREAD_INTERRUPTED, e));
                 }
             }).start();

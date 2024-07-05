@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
+import static message.MessageStrings.*;
+
 /**
  * The QuestionsApp class is responsible for handling quiz questions from a JSON file,
  * presenting them to a user, and validating user responses.
@@ -92,12 +94,12 @@ public class QuestionsApp {
             boolean isCorrect = (userAnswer - 1 == correctAnswerIndex);
 
             if (isCorrect) {
-                URL correctSound = Audio.class.getResource("right-answer.wav");
+                URL correctSound = Audio.class.getResource(RIGHT_ANSWER_SOUND);
                 music.playOnce(correctSound);
                 sender.send(MessageStrings.CORRECT_ANSWER);
                 sender.addKey(RoomEnum.valueOf(roomEnum.name()).getKey());
             } else {
-                URL incorrectSound = Audio.class.getResource("wrong-answer.wav");
+                URL incorrectSound = Audio.class.getResource(WRONG_ANSWER_SOUND);
                 music.playOnce(incorrectSound);
                 sender.send(MessageStrings.INCORRECT_ANSWER);
                 sender.removeKey(sender);
@@ -114,12 +116,12 @@ public class QuestionsApp {
                         sender.navigate();
                     }
                 } catch (InterruptedException | QuestionLoadException e) {
-                    throw new RuntimeException(new QuizProcessingException("Thread was interrupted during processing", e));
+                    throw new RuntimeException(new QuizProcessingException(QUIZ_PROCESSING_THREAD_INTERRUPTED, e));
                 }
             }).start();
 
         } catch (IOException e) {
-            throw new QuestionLoadException("Error loading questions from the JSON file", e);
+            throw new QuestionLoadException(ERROR_LOADING_QUESTIONS_FROM_JSON_FILE, e);
         } catch (InvalidAnswerException e) {
             sender.send(e.getMessage());
         }
