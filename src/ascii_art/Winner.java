@@ -1,7 +1,7 @@
 package ascii_art;
 
 /**
- * The Winner class provides an ASCII art representation of a winner MessageStrings.
+ * The {@code Winner} class provides an ASCII art representation of a winner message.
  * It displays a stylized text representation of "WINNER" using ASCII characters.
  */
 public final class Winner {

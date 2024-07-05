@@ -20,18 +20,20 @@ import static message.MessageStrings.*;
 public class Client {
 
     private static final int PORT = 9000;
-    private Socket client;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final Socket client;
+    private final BufferedReader in;
+    private final PrintWriter out;
+    private final Audio audio;
     private boolean running = true;
-    private Audio audio;
 
     /**
      * Creates a new Client instance and starts the connection.
+     *
+     * @throws ClientConnectionException if there is an error connecting to the server.
      */
     public Client() throws ClientConnectionException {
         try {
-            client = new Socket("localhost", PORT);
+            client = new Socket("10.10.226.184", PORT);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             audio = new Audio();
@@ -75,6 +77,8 @@ public class Client {
 
     /**
      * Shuts down the client by closing the input and output streams and the socket.
+     *
+     * @throws ClientShutdownException if there is an error shutting down the client.
      */
     public void shutdown() throws ClientShutdownException {
         running = false;

@@ -27,7 +27,7 @@ public class Menu {
     /**
      * Generates the main menu prompt.
      *
-     * @return the main menu as a String
+     * @return the main menu as a formatted String
      */
     public static String getMainMenu() {
         return "+--------------------------------------------------+\n" +
@@ -51,7 +51,7 @@ public class Menu {
     /**
      * Generates the exit menu prompt.
      *
-     * @return the exit menu as a String
+     * @return the exit menu as a formatted String
      */
     public static String getExitMenu() {
         return "+--------------------------------------------------+\n" +
@@ -68,7 +68,7 @@ public class Menu {
     /**
      * Generates the second menu prompt.
      *
-     * @return the second menu as a String
+     * @return the second menu as a formatted String
      */
     public static String getMenu2() {
         return "+--------------------------------------------------+\n" +
@@ -89,7 +89,7 @@ public class Menu {
     /**
      * Generates the third menu prompt.
      *
-     * @return the third menu as a String
+     * @return the third menu as a formatted String
      */
     public static String getMenu3() {
         return "+--------------------------------------------------+\n" +
@@ -109,7 +109,7 @@ public class Menu {
     /**
      * Generates the kitchen door menu prompt.
      *
-     * @return the kitchen door menu as a String
+     * @return the kitchen door menu as a formatted String
      */
     public static String getKitchenDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -125,7 +125,7 @@ public class Menu {
     /**
      * Generates the gym door menu prompt.
      *
-     * @return the gym door menu as a String
+     * @return the gym door menu as a formatted String
      */
     public static String getGymDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -141,7 +141,7 @@ public class Menu {
     /**
      * Generates the office door menu prompt.
      *
-     * @return the office door menu as a String
+     * @return the office door menu as a formatted String
      */
     public static String getOfficeDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -157,7 +157,7 @@ public class Menu {
     /**
      * Generates the bathroom door menu prompt.
      *
-     * @return the bathroom door menu as a String
+     * @return the bathroom door menu as a formatted String
      */
     public static String getBathroomDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -173,7 +173,7 @@ public class Menu {
     /**
      * Generates the bedroom door menu prompt.
      *
-     * @return the bedroom door menu as a String
+     * @return the bedroom door menu as a formatted String
      */
     public static String getBedroomDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -189,7 +189,7 @@ public class Menu {
     /**
      * Generates the living room door menu prompt.
      *
-     * @return the living room door menu as a String
+     * @return the living room door menu as a formatted String
      */
     public static String getLivingRoomDoorMenu() {
         return "+--------------------------------------------------+\n" +
@@ -203,10 +203,11 @@ public class Menu {
     }
 
     /**
-     * Generates the welcome MessageStrings prompt.
+     * Generates the welcome message prompt.
      *
-     * @return the welcome MessageStrings as a String
+     * @return the welcome message as a String
      */
+
     public static String getWelcomeMessage() {
         return "Welcome to the Castle ...";
     }

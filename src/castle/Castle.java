@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Castle class represents a collection of rooms in a castle and manages their initialization.
+ * The {@code Castle} class represents a collection of rooms in a castle and manages their initialization.
  * It provides methods to retrieve specific rooms and interacts with a server.
  */
 public class Castle {
@@ -15,8 +15,8 @@ public class Castle {
     private Server server;
 
     /**
-     * Constructs a Castle object with a given server.
-     * Initializes rooms based on the RoomEnum values.
+     * Constructs a {@code Castle} object with a given server.
+     * Initializes rooms based on the {@code RoomEnum} values.
      *
      * @param server The server associated with the castle.
      */
@@ -31,10 +31,10 @@ public class Castle {
     }
 
     /**
-     * Initializes a specific room based on the provided RoomEnum.
+     * Initializes a specific room based on the provided {@code RoomEnum}.
      *
-     * @param roomEnum The RoomEnum specifying the type of room to initialize.
-     * @return The initialized Room object corresponding to the RoomEnum.
+     * @param roomEnum The {@code RoomEnum} specifying the type of room to initialize.
+     * @return The initialized {@code Room} object corresponding to the {@code RoomEnum}.
      */
     private Room initializeRooms(RoomEnum roomEnum) {
         switch (roomEnum) {
@@ -61,10 +61,10 @@ public class Castle {
     }
 
     /**
-     * Retrieves the Room object associated with the specified RoomEnum.
+     * Retrieves the {@code Room} object associated with the specified {@code RoomEnum}.
      *
-     * @param roomEnum The RoomEnum representing the type of room to retrieve.
-     * @return The Room object associated with the specified RoomEnum, or null if not found.
+     * @param roomEnum The {@code RoomEnum} representing the type of room to retrieve.
+     * @return The {@code Room} object associated with the specified {@code RoomEnum}, or {@code null} if not found.
      */
     public Room getRoom(RoomEnum roomEnum) {
         return rooms.get(roomEnum.ordinal());

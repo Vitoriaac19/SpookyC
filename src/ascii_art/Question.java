@@ -1,7 +1,7 @@
 package ascii_art;
 
 /**
- * The Question class provides an ASCII art representation of the word "QUESTION".
+ * The {@code Question} class provides an ASCII art representation of the word "QUESTION".
  * It is designed to display a stylized version of the word in a fixed format.
  */
 public final class Question {

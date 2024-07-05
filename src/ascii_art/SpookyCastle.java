@@ -1,7 +1,7 @@
 package ascii_art;
 
 /**
- * The SpookyCastle class provides an ASCII art representation of a spooky castle.
+ * The {@code SpookyCastle} class provides an ASCII art representation of a spooky castle.
  * It displays a castle surrounded by atmospheric elements in ASCII characters.
  */
 public final class SpookyCastle {
